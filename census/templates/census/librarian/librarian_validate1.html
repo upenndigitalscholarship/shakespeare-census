@@ -1,0 +1,102 @@
+{% extends "census/base.html" %}
+{% load static %}
+{% block content %}
+<div>
+    <script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
+    <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
+
+    <div id="copyModal" class="modal fade" role="dialog"></div>
+
+</div>
+
+<div class="container">
+    <hr class = "style14" width = "50%"></hr>
+    <p class="guide-text">
+    Here is a list of the copies we think your institution holds.<br />
+    Do you actually hold these copies?<br />
+    </p>
+    <p class="guide-text">
+    Please choose 'Yes' or 'No.'<br />
+    When you have finished for this session, please click on the button below:<br />
+    </p>
+    <p class="guide-text">
+        <a class="button" href={% url 'librarian_start' %}>Confirm Holdings</a>
+    </p>
+    <hr class="style14" width = "50%"></hr>
+
+    <table class="librarian-select-ui">
+        <tbody>
+            <tr>
+                <th class="librarian-select-ui-wide">Copies at {{ affiliation }}</th>
+                <th class="librarian-select-ui"></th>
+                <th class="librarian-select-ui">Held by library?</th>
+            </tr>
+            {% for copy in copies %}
+                {% with draft=copy.drafts.all.0 draft_held=copy.drafts.all.0.location_verified %}
+                    {% if not draft %}
+                        <tr id="section {{ copy.id }}">
+                            <td>{{ copy.issue.edition.title }}
+                                ({{ copy.issue.year }}) --
+                                STC/Wing: {{ copy.issue.STC_Wing }}
+                            </td>
+                            <td>
+                                <span class="copy_data button-inline" id="data{{copy.id}}" data-form="{% url 'draft_copy_data' copy.id %}" title="Details">
+                                    View details
+                                </span>
+                            </td>
+                            <td>
+                                <span class="button-inline {% if draft %}{{ draft_held|yesno:"button-inline-selected," }}{% endif %}" id="yes_button_{{copy.id}}" onclick="yes({{ copy.id }})" title="Yes">
+                                    Yes
+                                </span>
+                                <span class="button-inline {% if draft %}{{ draft_held|yesno:",button-inline-selected" }}{% endif %}"  id="no_button_{{copy.id}}" onclick="no({{ copy.id }})" title="No">
+                                    No
+                                </span>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endwith %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    
+
+    <script>
+
+function yes(id){
+  // alert("you just clicked yes");
+  var copy_id = id;
+  console.log(copy_id)
+  $.ajax({
+    type: "GET",
+    url: "create_draftcopy/",
+    data: {
+      copy_id: copy_id
+    },
+  }).done(function(data) {
+    $('#yes_button_' + copy_id).addClass('button-inline-selected');
+    $('#no_button_' + copy_id).removeClass('button-inline-selected');
+  });
+
+}
+
+function no(id){
+  // alert("you just clicked no");
+  var copy_id = id;
+  console.log(copy_id)
+  $.ajax({
+    type: "GET",
+    url: "location_incorrect/",
+    data: {
+      copy_id: copy_id
+    },
+  }).done(function (data) {
+    console.log(data)
+    $('#no_button_' + copy_id).addClass('button-inline-selected');
+    $('#yes_button_' + copy_id).removeClass('button-inline-selected');
+  });
+}
+ </script>
+{% endblock content %}

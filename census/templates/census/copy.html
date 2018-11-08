@@ -1,0 +1,69 @@
+{% extends "census/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+
+<div class = "wrapper">
+    <div>
+        <script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
+        <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
+
+        <div id="copyModal" class="modal fade" role="dialog"></div>
+    </div>
+    {% include "census/play-title-header.html" with selected_issue=selected_issue icon_path=icon_path title=title all_copies=all_copies %}
+    <table class="play-detail-set">
+
+        {% if all_copies %}
+        <tr>
+            <th class="terse"> SC # </th>
+            <th class="detailed"> Location </th>
+            <th> Shelfmark </th>
+            <th class="terse"> Verified? </th>
+        </tr>
+        {% for copy in all_copies %}
+        <tr>
+            <td>
+                {% if copy.NSC and copy.NSC != '0' %}
+                    <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                        {{ copy.NSC }}
+                    </a>
+                {% else %}
+                    &nbsp;
+                {% endif %}
+                {% if user.is_staff %}
+                    <span class="note">[<a href="{% url 'admin:census_canonicalcopy_change' copy.id %}">Edit copy</a>]</span>
+                {% endif %}
+            </td>
+            <td>
+                <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                    {{copy.location.name}}
+                </a>
+            </td>
+            <td>
+                {% if not copy.Shelfmark or copy.Shelfmark == "[Shelfmark not available]" or copy.Shelfmark is None %}
+                    &nbsp;
+                {% else %}
+                    <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                        {{ copy.Shelfmark }}
+                    </a>
+                {% endif %}
+            </td>
+            <td>
+                {% if copy.from_estc and not copy.location_verified %}
+              	    <span title="The existence of this copy has not been verified; location derived from ESTC." class="unverified-symbol">&#x20E0;</span>
+                {% elif not copy.location_verified %}
+              	    <span title="The existence of this copy has not been verified; location entered by an administrator." class="unverified-symbol">&#x20E0;</span>
+                {% else %}
+              	    <span title="This existence of this copy at the location has been verified." class="verified-symbol">&#x2713;</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <p class="sansserif" align="center">No editions are available.</p>
+        {% endif %}
+    </table>
+</div>
+
+{% endblock content %}

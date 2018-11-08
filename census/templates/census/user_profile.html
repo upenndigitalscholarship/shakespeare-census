@@ -1,0 +1,47 @@
+{% extends "census/base.html" %}
+{% load static %}
+{% block content %}
+<link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300" rel="stylesheet">
+<br>
+<br>
+<table class="play-detail-set">
+    <tr>
+        <th colspan=4>
+            Thanks for helping us to improve the Shakespeare Census.
+            <br />
+            Here are the details we have stored for your account.
+        </th>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td>Username: </td>
+        <td>{{ user.username}}</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td>Email: </td>
+        <td>{{ user.email }}</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td>First name: </td>
+        <td>{{ user.first_name }}</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td>Last name: </td>
+        <td>{{ user.last_name }}</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan=4>
+            <p class="static-text">
+                If you'd like to change any of the above information, click <a href="{% url 'edit_profile' %}" class="editbutton" role="button">here</a>.
+            </p>
+        </td>
+    </tr>
+</table>
+{% endblock content %}

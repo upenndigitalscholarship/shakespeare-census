@@ -1,0 +1,113 @@
+{% extends "census/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+
+<script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
+<script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
+
+{% if not user.is_authenticated %}
+    <p>Please sign in to make any change</p>
+{% else %}
+    {% if copy %}
+        {% include "census/play-title-header.html" with selected_issue=copy.issue title=copy.issue.edition.title %}
+    {% else %}
+        {% include "census/play-title-header.html" with selected_issue=issue title=issue.edition.title %}
+    {% endif %}
+       
+    <p class="guide-text">
+        {% if user.is_staff %}
+        To add a new copy, please fill in the form below.
+        {% elif issue %}
+        If you have a copy of this edition that is not in our database,<br \>
+        please fill in the form below to submit it.<br \>
+        An administrator will review your submission as soon as possible.
+        {% else %}
+        You can edit the details of this copy here.<br \>
+        An administrator will review your submission as soon as possible.
+        {% endif %}
+    </p>
+    <p class="guide-text">
+        For information on how to use each field, please see the <a href={% url 'about' 'cataloguingguide' %} target="_blank">Cataloging Guide</a>.
+    </p>
+
+    <form class="form-inline"  method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div>
+            <h4><p class="guide-text">Required:</p></h4>
+            <table class="admin-submit">
+                <tbody>
+                    {% if user.is_staff %} 
+                        <tr>
+                            <td>{{ form.location.label_tag }}</td>
+                            <td>{{ form.location }}</td>
+                            <td>{{ form.location.errors }}</td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <td>{{ form.Shelfmark.label_tag }}</td>
+                        <td>{{ form.Shelfmark }}</td>
+                        <td>{{ form.Shelfmark.errors }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h4><p class="guide-text">Optional:</p></h4>
+            <table class="admin-submit">
+                <tbody>
+                    <tr>
+                        <td>{{ form.prov_info.label_tag }}</td>
+                        <td>{{ form.prov_info }}</td>
+                        <td>{{ form.prov_info.errors }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form.Marginalia.label_tag }}</td>
+                        <td>{{ form.Marginalia }}</td>
+                        <td>{{ form.Marginalia.errors }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form.Binding.label_tag }}</td>
+                        <td>{{ form.Binding }}</td>
+                        <td>{{ form.Binding.errors }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form.Binder.label_tag }}</td>
+                        <td>{{ form.Binder }}</td>
+                        <td>{{ form.Binder.errors }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form.Bookplate.label_tag }}</td>
+                        <td>{{ form.Bookplate }}</td>
+                        <td>{{ form.Bookplate.errors }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form.Bookplate_Location.label_tag }}</td>
+                        <td>{{ form.Bookplate_Location }}</td>
+                        <td>{{ form.Bookplate_Location.errors }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form.Local_Notes.label_tag }}</td>
+                        <td>{{ form.Local_Notes }}</td>
+                        <td>{{ form.Local_Notes.errors }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form.Height.label_tag }}</td>
+                        <td>{{ form.Height }}</td>
+                        <td>{{ form.Height.errors }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form.Width.label_tag }}</td>
+                        <td>{{ form.Width }}</td>
+                        <td>{{ form.Width.errors }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="guide-text">
+                <input type="submit" name="submit" value="submit" />
+            </p>
+        </div>
+    </form>
+    
+{% endif %}
+{% endblock content %}

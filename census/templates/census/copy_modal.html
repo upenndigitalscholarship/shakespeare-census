@@ -1,0 +1,108 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 align="left" class="modal-title">Copy Details for {{ copy.issue.edition.title }} ({{ copy.issue.year }})</h3>
+        </div>
+        <div class="modal-body">
+          <!--div class="half-one"-->
+            <p align="left"><strong>SC #</strong>: {% if copy.NSC and copy.NSC != '0' %}{{ copy.NSC }}{% endif %}</p>
+
+            <p align="left"><strong>Location</strong>: {% if copy.location %}{{ copy.location.name }}{% endif %}</p>
+
+            <p align="left"><strong>Shelfmark</strong>: {% if copy.Shelfmark and copy.Shelfmark != "[Shelfmark not available]" %}{{ copy.Shelfmark }}{% endif %}</p>
+
+            {% if copy.issue.notes %}
+            <p align="left"><strong>Notes about issue</strong>: {{ copy.issue.notes }}</p>
+            {% endif %}
+
+            {% if copy.Local_Notes %}
+            <p align="left"><strong>Copy-specific notes</strong>: {{ copy.Local_Notes}}</p>
+            {% endif %}
+
+            {% if copy.prov_info %}
+            <p align="left"><strong>Provenance</strong>: {{ copy.prov_info}}</p>
+            {% endif %}
+
+            {% if copy.Height %}
+            <p align="left"><strong>Height</strong>: {{ copy.Height }} cm</p>
+            {% endif %}
+
+            {% if copy.Width %}
+            <p align="left"><strong>Width</strong>: {{ copy.Width }} cm</p>
+            {% endif %}
+
+            {% if copy.Marginalia %}
+            <p align="left"><strong>Marginalia</strong>: {{ copy.Marginalia }}</p>
+            {% endif %}
+
+            {% if copy.Condition %}
+            <p align="left"><strong>Condition</strong>: {{ copy.Condition }}</p>
+            {% endif %}
+
+            {% if copy.Binding %}
+            <p align="left"><strong>Binding</strong>: {{ copy.Binding }}</p>
+            {% endif %}
+
+            {% if copy.Binder %}
+            <p align="left"><strong>Binder</strong>: {{ copy.Binder }}</p>
+            {% endif %}
+
+            {% if copy.Bookplate %}
+            <p align="left"><strong>Bookplate</strong>: {{ copy.Bookplate }}</p>
+            {% endif %}
+
+            {% if copy.Bookplate_Location %}
+            <p align="left"><strong>Bookplate location</strong>: {{ copy.Bookplate_Location }}</p>
+            {% endif %}
+
+            {% if copy.Lee_Notes %}
+            <p align="left"><strong>Lee notes</strong>: {{ copy.Lee_Notes }}</p>
+            {% endif %}
+
+            {% if copy.bibliography %}
+            <p align="left"><strong>For scholarship on this copy, see</strong>: {{ copy.bibliography }}</p>
+            {% endif %}
+          <!--</div>--->
+
+
+          <!--div class="half-two"--->
+            {% if copy.Bartlett1939 %}
+            <p align="left"><strong>Bartlett 1939 #</strong>: {{ copy.Bartlett1939 }}</p>
+            {% endif %}
+
+            {% if copy.Bartlett1916 %}
+            <p align="left"><strong>Bartlett 1916 #</strong>: {{ copy.Bartlett1916 }}</p>
+            {% endif %}
+
+            {% if copy.Bartlett1939_Notes %}
+            <p align="left"><strong>Bartlett 1939 notes</strong>: {{ copy.Bartlett1939_Notes }}</p>
+            {% endif %}
+
+            {% if copy.Bartlett1916_Notes %}
+            <p align="left"><strong>Bartlett 1916 notes</strong>: {{ copy.Bartlett1916_Notes }}</p>
+            {% endif %}
+          <!--div--->
+
+
+
+        </div>
+    </div>
+</div>
+<!---
+<style>
+html, body {
+	width: 100%;
+	height: 99%;
+}
+[class|=half] {
+	position: relative;
+	display: inline-block;
+	width: 49%;
+	height: 130%;
+}
+.half-one {
+	border-right: 1px solid #000000;
+}
+</style>
+
+--->

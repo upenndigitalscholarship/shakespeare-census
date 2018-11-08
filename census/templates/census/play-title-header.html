@@ -1,0 +1,99 @@
+    {% load static %}
+    {% load humanize %}
+
+    <table class="play-title-header">
+        <tr>
+            <td rowspan="3" class="play-title-header-icon">
+                <div class="play-title-icon-border">
+                    <a href = "{% url 'detail' title.id %}">
+                        <img class="play-title-icon" src="{% static icon_path %}">
+                    </a>
+                </div>
+            </td>
+            <td class="play-title-header">
+                <a href = "{% url 'detail' title.id %}">
+                    {{ title.title }}
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td class="play-issue-header">
+                <span>
+                    {% if selected_issue.edition.Edition_number.isdigit %}
+                    {{ selected_issue.edition.Edition_number|add:"0"|ordinal }}&nbsp;Edition
+                    {% else %}
+                    {{ selected_issue.edition.Edition_number.capitalize }}
+                    {% endif %}
+                    {% if selected_issue.edition.Edition_format %}
+                    ({{ selected_issue.edition.Edition_format }})
+                    {% endif %}
+                </span>
+                <span>{{ selected_issue.year }}</span>
+                <span>STC&#8239;/&#8239;Wing:&nbsp;{{ selected_issue.STC_Wing }}</span>
+
+                {% if selected_issue.ESTC and selected_issue.ESTC != 'not in ESTC' and ';' not in selected_issue.ESTC %}
+
+                     <span class="static-text">
+                        ESTC:&nbsp;<a href="http://estc.bl.uk/{{ selected_issue.ESTC }}" target="_blank">{{ selected_issue.ESTC }}</a>
+                    </span>
+                {% elif ';' in selected_issue.ESTC %}
+                     <span class="static-text">
+                       ESTC:
+                       {% for estc, is_last in selected_issue.ESTC_as_list %}
+                          {% if not is_last %}
+                              &nbsp;<a href="http://estc.bl.uk/{{ estc }}" target="_blank">{{ estc }}</a>;
+                          {% else %}
+                              &nbsp;<a href="http://estc.bl.uk/{{ estc }}" target="_blank">{{ estc }}</a>
+                          {% endif %}
+                       {% endfor %}
+                     </span>
+
+                {% else %}
+                    <span class="static-text">
+                        ESTC: not in ESTC
+                    </span>
+                {% endif %}
+
+                {% if selected_issue.DEEP and selected_issue.DEEP != '0' and ';' not in selected_issue.DEEP %}
+                    <span class="static-text">
+                        DEEP:&nbsp;<a href="http://deep.sas.upenn.edu/viewrecord.php?deep_id={{ selected_issue.DEEP }}" target="_blank">{{ selected_issue.DEEP }}</a>
+                    </span>
+                {% elif ';' in selected_issue.DEEP%}
+                    <span class="static-text">
+                      DEEP:
+                      {% for deep, is_last in selected_issue.DEEP_as_list %}
+                     {% if not is_last %}
+                      &nbsp;<a href="http://deep.sas.upenn.edu/viewrecord.php?deep_id={{ deep }}" target="_blank">{{ deep }}</a>;
+                      {% else %}
+                      &nbsp;<a href="http://deep.sas.upenn.edu/viewrecord.php?deep_id={{ deep }}" target="_blank">{{ deep }}</a>
+                      {% endif %}
+                      {% endfor %}
+                    </span>
+                {% else %}
+                    <span class="static-text">
+                        DEEP: not in DEEP
+                    </span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td class="play-issue-header">
+                {% if all_copies %}
+                    <span>Extant copies: {{ all_copies|length }} </span>
+                    {% if user.is_authenticated %}
+                        <span class="note">
+                            [
+                            <a href="{% url 'add_copy' selected_issue.id %}">
+                            {% if user.is_staff %}
+                                Add new copy
+                            {% else %}
+                                I have an unlisted copy
+                            {% endif %}
+                            </a>
+                            ]
+                        </span>
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+    </table>

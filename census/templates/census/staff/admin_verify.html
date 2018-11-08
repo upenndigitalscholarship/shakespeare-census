@@ -1,0 +1,73 @@
+{% extends "census/base.html" %}
+{% load static %}
+{% block content %}
+
+{% if not user.is_staff %}
+<p>Please sign in as administrator to view this page or do anything</p>
+{% else %}
+<div>
+    <script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
+    <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
+
+    <div id="copyModal" class="modal fade" role="dialog"></div>
+</div>
+
+
+<div class="container">
+    <hr class = "style14" width = "50%"></hr>
+    <p class="guide-text">
+    Here is a list of the copies librarians have verified.<br />
+    Please check the details and approve if correct.
+    </p>
+    <hr class="style14" width = "50%"></hr>
+
+    <table class="librarian-select-ui">
+      <tbody>
+        <tr>
+          <th class="librarian-select-ui-wide">Copies awaiting approval</th>
+          <th class="librarian-select-ui"></th>
+          <th class="librarian-select-ui">Held by library?</th>
+          <th class="librarian-select-ui"></th>
+        </tr>
+        {% if copies %}
+            {% for copy in copies %}
+                <tr>
+                    <td>{{ copy.issue.edition.title }}
+                        ({{ copy.issue.year }}) --
+                        STC/Wing: {{ copy.issue.STC_Wing }}
+                    </td>
+                    <td>
+			<!-- Here we display the canonical copy data, because we are only approving the location verification.
+			     If there are additional edits to the record, they will appear in the next queue. -->
+                        <span class="copy_data button-inline-small" id="data{{copy.parent.id}}" data-form="{% url 'copy_data' copy.parent.id %}" title="Details">
+                            View details
+                        </span>
+                    </td>
+                    <td>
+                        {{ copy.location_verified|yesno:"Yes,No" }}
+                    </td>
+                    <td>
+                        <button id="validate-{{ copy.id }}" class="button-inline" onclick="adminValidate({{ copy.id }});">Verify</button>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+      </tbody>
+    </table>
+</div>
+<script>
+function adminValidate(copy_id) {
+    $.ajax({
+        type: "GET",
+        url: "admin_verify_copy/",
+        data: {
+            copy_id: copy_id
+        },
+    }).done(function() {
+        $('#validate-' + copy_id).addClass('button-inline-selected');
+    });
+}
+</script>
+{% endif %}
+{% endblock content %}

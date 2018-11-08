@@ -1,0 +1,9 @@
+{% extends 'census/base.html' %}
+{% load static %}
+{% block content %}
+  {% for c in content %}
+    <p class="static-text">
+      {{ c|safe }}
+    </p>
+  {% endfor %}
+{% endblock content %}

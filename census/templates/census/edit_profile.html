@@ -1,0 +1,62 @@
+{% extends "census/base.html" %}
+{% load static %}
+{% block content %}
+<!-- <script type="text/javascript" src="/static/census/popup_script.js"></script> -->
+  <link rel="stylesheet" type="text/css" href= "{% static 'census/editProfile.css' %}" />
+
+<br>
+<div class ="greeting">
+What would you like to change?
+</div>
+<br>
+<br>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <div class = "messages">
+    <li class = "messages">{{ message }}</li>
+    </div>
+    {% endfor %}
+</ul>
+{% endif %}
+<br>
+
+
+<div class = "profileform">
+<p class="errors sansserif">
+	<form method="post" action="{% url 'edit_profile' %}">
+		{% csrf_token %}
+    <table align='center'>
+    <!-- <tr>
+    <td>Username: </td>
+    <td> {{ profile_form.username }}</td>
+    </tr> -->
+    <tr>
+    <td>First name: </td>
+    <td> {{ profile_form.first_name }}</td>
+    </tr>
+    <tr>
+    <td>Last name:</td>
+    <td>{{ profile_form.last_name }}</td>
+    </tr>
+    <tr>
+    <td>Email:</td>
+    <td>{{ profile_form.email }}</td>
+    </tr>
+    <tr>
+    <td></td>
+    <td class="editprofilesubmit">
+    <div class="my-button">
+            <input type="submit" name="submit" value="submit" class="editprofilesubmit2"/>
+    </div>
+    </td>
+    </tr>
+    </table>
+
+
+
+	</form>
+</p>
+</div>
+
+{% endblock content %}

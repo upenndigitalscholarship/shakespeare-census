@@ -1,0 +1,79 @@
+{% load static %}
+
+<div class="tucked">
+    {% if user.is_authenticated %}
+    <a class="button" href="{% url 'logout_user' %}">Sign out</a>
+    <a class="button" href="{% url 'profile' %}">Account</a>
+    {% if user.is_staff %}
+    <a class="button" href="{% url 'admin_start' %}">Site Administration</a>
+    {% else %}
+    <a class="button" href="{% url 'librarian_start' %}">Library Holdings</a>
+    {% endif %}
+    {% else %}
+
+    <a class="button" href="{% url 'login_user' %}">Sign in</a>
+    {% endif %}
+    <!-- A normally-styled non-breaking space always appears here
+        to ensure consistent div height. Someday we will find the
+        correct way to do this. -->
+        &nbsp;
+</div>
+<table class="title">
+    <tr>
+        <th>
+            &nbsp;
+        </th>
+        <th>
+            &nbsp;
+        </th>
+        <th>
+            &nbsp;
+        </th>
+        <th>
+            &nbsp;
+        </th>
+   </tr>
+    <tr>
+        <td colspan="4">
+          {% if request.path == '/homepage' %}
+            <a>Shakespeare Census</a>
+          {% else %}
+            <a href="{% url 'homepage' %}">Shakespeare Census</a><br/>
+          {% endif %}
+        </td>
+    </tr>
+</table>
+
+<table class="header-title-nav">
+   <tr>
+     <th>
+       <a href="{% url 'about' %}">about</a>
+     </th>
+     <th>
+       <a href="#search" id="site-search-button">search</a>
+     </th>
+   </tr>
+</table>
+
+<div class="search-bar">
+  <form id="search-bar-form" class="hidden" action="/search/" method="get">
+    <select name="field">
+      <option disabled selected value>Search by...</option>
+      <option value="location">Location</option>
+      <option value="year">Year</option>
+      <option value="stc">STC / Wing #</option>
+      <option value="bartlett">Bartlett #</option>
+    </select>
+    <input type="text" name="value" placeholder="Search..">
+    <input type="submit" value="Submit" >
+  </form>
+</div>
+
+<script>
+    utils.get.id('site-search-button').addEventListener('click', function () {
+        utils.togglehide.id('search-bar-form');
+    });
+    // if (window.location.hash && window.location.hash === '#search') {
+    //    utils.get.id('search-bar-form').classList.remove('hidden');
+    // }
+</script>

@@ -1,0 +1,64 @@
+{% extends "census/base.html" %}
+{% load static %}
+{% block content %}
+<div>
+    <script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
+    <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
+
+    <div id="copyModal" class="modal fade" role="dialog"></div>
+
+</div>
+
+<div class="container">
+    <hr class = "style14" width = "50%"></hr>
+    <p class="guide-text">
+    You have verified the following copies.</p>
+    <p class="guide-text">
+    Please view copy details to see if anything needs to be edited. <br />
+    Edits will be automatically submitted to an administrator for approval.
+    </p>
+    <hr class="style14" width = "50%"></hr>
+
+    <table class="librarian-select-ui">
+        <tbody>
+            <tr>
+                <th class="librarian-select-ui-wide">Copies at {{ affiliation }}</th>
+                <th class="librarian-select-ui"></th>
+                <th class="librarian-select-ui"></th>
+                <th class="librarian-select-ui"></th>
+            </tr>
+            {% for copy in child_copies %}
+            <tr>
+                <td>{{ copy.issue.edition.title }}
+                    ({{ copy.issue.year }}) --
+                    STC/Wing: {{ copy.issue.STC_Wing }}
+                </td>
+                <td>
+                    <a class="copy_data button-inline" id="data{{copy.id}}" href="#" data-form="{% url 'draft_copy_data' copy.id %}" title="Details">
+                        View details
+                    </a>
+                </td>
+                <td>
+                    <a class="button-inline" href="{% url 'update_draft_copy' copy.id %}" target="_blank">
+                        Edit details
+                    </a>
+                </td>
+
+                <td id="validate {{ copy.id }}">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+
+
+</div>
+
+
+<script>
+
+</script>
+{% endblock %}

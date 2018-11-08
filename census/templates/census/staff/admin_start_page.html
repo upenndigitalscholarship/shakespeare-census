@@ -1,0 +1,42 @@
+{% extends "census/base.html" %}
+{% load static %}
+{% block content %}
+<script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
+<script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
+<div class="middle-frame">
+    <table class="admin-ui">
+        <tr>
+            <td>
+                <h3>Administrative Tasks</h3>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h4>Verify changes made by librarians</h4>
+                <p><a href="{% url 'admin_verify_location_verified' %}" class="button">Verify copy location</a></p>
+                <p><a href="{% url 'admin_edit_verify' %}" class="button">Verify librarian edits</a></p>
+                <p><a href="{% url 'admin_submission_verify' %}" class="button">Verify new submissions</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h4>Add new users</h4>
+                <p><a href="{% url 'signup' %}" class="button">New user form</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h4>View public comments and submissions</h4>
+                <p><a href="{% url 'admin:census_contactform_changelist' %}" class="button">Comments and submissions</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h4>Other administration tools</h4>
+                <p><a href="{% url 'admin:index' %}" class="button">Other administration tools</a></p>
+            </td>
+        </tr>
+    </table>
+</div>
+{% endblock content %}

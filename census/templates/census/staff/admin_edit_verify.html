@@ -1,0 +1,89 @@
+{% extends "census/base.html" %}
+{% load static %}
+{% block content %}
+
+{% if not user.is_staff %}
+<p>Please sign in as administrator to view this page or do anything</p>
+{% else %}
+<div>
+    <script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
+    <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
+
+    <div id="copyModal" class="modal fade" role="dialog"></div>
+</div>
+
+<div class="container">
+    <hr class = "style14" width = "50%"></hr>
+    <p class="guide-text">
+        Here is a list of the copies librarians have edited.
+    </p>
+    <p class="guide-text">
+        Please check the details and verify the information.
+    </p>
+    <hr class="style14" width = "50%"></hr>
+
+    <table class="table table-striped" align="center" style="width:70%">
+        <tbody>
+            {% if copies %}
+                <tr>
+                  <th>Copy</th>
+                  <th></th>
+                </tr>
+                {% for copy in copies %}
+                    <tr id="copy-record-{{ copy.id }}">
+                        <td>{{ copy.issue.edition.title }}
+                            ({{ copy.issue.year }}) --
+                            STC/Wing: {{ copy.issue.STC_Wing }}
+                        </td>
+                        <td>
+			    <a class="copy_data button-inline" id="original-details-{{ copy.id }}" href="#" data-form="{% url 'copy_data' copy.parent.id %}" title="Details">Original Version</a>
+                        </td>
+                        <td>
+			    <a class="copy_data button-inline" id="new-draft-details-{{ copy.id }}" href="#" data-form="{% url 'draft_copy_data' copy.id %}" title="Details">New Version</a>
+                        </td>
+                        <td>
+                            <button class="button-inline" id="accept-{{ copy.id }}" onclick="accept({{ copy.id }});">Accept</button>
+                        </td>
+                        <td>
+                            <button class="button-inline" id="reject-{{ copy.id }}" onclick="reject({{ copy.id }});">Reject</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+function accept(copy_id) {
+    $.ajax({
+        type: "GET",
+        url: "admin_verify_single_edit_accept/",
+        data: {
+            copy_id: copy_id
+        },
+    }).done(function() {
+        $('#accept-' + copy_id).addClass('button-inline-selected');
+        $('#reject-' + copy_id).removeClass('button-inline-selected');
+	$('original-details-' + copy_id).addClass('hidden');
+	$('new-draft-details-' + copy_id).addClass('hidden');
+    });
+}
+function reject(copy_id) {
+    $.ajax({
+        type: "GET",
+        url: "admin_verify_single_edit_reject/",
+        data: {
+            copy_id: copy_id
+        },
+    }).done(function() {
+        $('#accept-' + copy_id).removeClass('button-inline-selected');
+        $('#reject-' + copy_id).addClass('button-inline-selected');
+	$('original-details-' + copy_id).addClass('hidden');
+	$('new-draft-details-' + copy_id).addClass('hidden');
+    });
+}
+</script>
+{% endif %}
+{% endblock content %}

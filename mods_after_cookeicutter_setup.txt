@@ -1,0 +1,7 @@
+copied `census` folder into base dir
+modified config/settings/base.py
+    adedd 'census' to INSTALLED_APPS
+    uncommented humanize tag library
+modified config/settings/local.py
+    added local IP to ALLOWED_HOSTS
+

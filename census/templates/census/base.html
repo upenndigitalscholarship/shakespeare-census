@@ -1,0 +1,22 @@
+{% load static %}
+<html>
+    <head>
+        {% include "census/site_head.html" %}
+    </head>
+    <body>
+        <div class="frame-container">
+            <div class="outer-frame">
+                <header>
+                    {% include "census/site_header.html" %}
+                </header>
+
+                {% block content %}{% endblock content %}
+
+                <div class="footer">
+                    {% include "census/site_footer.html" %}
+                </div>
+            </div>
+        </div>
+    </body>
+
+</html>

@@ -1,0 +1,89 @@
+{% extends "census/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+
+<div class = "wrapper">
+    <div>
+        <script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
+        <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
+
+        <div id="copyModal" class="modal fade" role="dialog"></div>
+    </div>
+    <table class="play-title-header">
+        <tr>
+            <td rowspan="3" class="play-title-header-icon">
+                <div class="play-title-icon-border">
+                <img class="play-title-icon-generic" src="{% static icon_path %}">
+                </div>
+            </td>
+            <td class="play-title-header">
+                Search Results
+            </td>
+        </tr>
+        <tr>
+            <td class="play-issue-header">
+                {{ field }}: {{ value }}
+            </td>
+        </tr>
+        <tr>
+            <td class="play-issue-header">
+                <span>Extant copies: {{ copy_count }} </span>
+            </td>
+        </tr>
+    </table>
+
+    <table class="play-detail-set">
+
+        {% if result_list %}
+        <tr>
+            <th class="terse"> SC # </th>
+            <th> Year </th>
+            <th class="detailed"> Title </th>
+            <th class="detailed"> Location </th>
+            <th class="terse"> STC / Wing </th>
+        </tr>
+        {% for copy in result_list %}
+        <tr>
+            <td>
+                {% if copy.NSC and copy.NSC != '0' %}
+                    <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                        {{ copy.NSC }}
+                    </a>
+                {% else %}
+                    &nbsp;
+                {% endif %}
+                {% if user.is_staff %}
+                    <span class="note">[<a href="{% url 'admin:census_canonicalcopy_change' copy.id %}">Edit copy</a>]</span>
+                {% endif %}
+            </td>
+            <td>
+                <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                    {{ copy.issue.year }}
+                </a>
+            </td>
+            <td>
+                <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                    {{ copy.issue.edition.title }}
+                </a>
+            </td>
+            <td>
+                <!-- <a class="copy_data" id="data{{copy.id}}" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details"> -->
+                <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                    {{copy.location.name}}
+                </a>
+            </td>
+            <td>
+                <a href="{% url 'copy' copy.issue.id %}" target="_blank" title="Go to Edition">{{ copy.issue.STC_Wing }}&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-external-link-alt"></i></a>
+            </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <p class="sansserif" align="center">No copies found.</p>
+        {% endif %}
+    </table>
+
+</div>
+
+{% endblock content %}

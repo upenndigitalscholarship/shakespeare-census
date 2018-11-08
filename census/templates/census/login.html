@@ -1,0 +1,32 @@
+{% extends 'census/base.html' %}
+{% load static %}
+{% block content %}
+            <form id="login_form" method="post" action="/login{% if next %}/?next={{next}}{% endif %}">
+                {% csrf_token %}
+                <table>
+                    <tr>
+                        <td>
+                        {% if failed == True %}
+                        <p class="notice">We could not find your account. Perhaps you've mistyped your username or password?</p>
+                        {% else %}
+                        <p class="notice">Please enter your username and password.</p>
+                        {% endif %}
+                        </td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td><input type="text" name="username" placeholder="Username" value="" size="30" /></td>
+                    </tr>
+                    <tr>
+                        <td><input type="password" name="password" placeholder="Password" value="" size="30" /></td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td><input type="submit" value="Login" /></td>
+                    </tr>
+                </table>
+                <input type="hidden" name="next" value={{next}}>
+            </form>
+{% endblock content %}

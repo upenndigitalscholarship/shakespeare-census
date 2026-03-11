@@ -1,32 +1,65 @@
-FROM python:3.6-alpine
+FROM python:3.6-alpine AS builder
 
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
+# Install build dependencies
 RUN apk update \
-  # psycopg2 dependencies
-  && apk add --virtual build-deps gcc python3-dev musl-dev \
-  && apk add postgresql-dev \
-  # Pillow dependencies
-  && apk add jpeg-dev zlib-dev freetype-dev lcms2-dev openjpeg-dev tiff-dev tk-dev tcl-dev \
-  # CFFI dependencies
-  && apk add libffi-dev py-cffi \
-  # Translations dependencies
-  && apk add gettext \
-  # https://docs.djangoproject.com/en/dev/ref/django-admin/#dbshell
-  && apk add postgresql-client
+    && apk add --virtual build-deps \
+        gcc \
+        python3-dev \
+        musl-dev \
+        postgresql-dev \
+        jpeg-dev \
+        zlib-dev \
+        freetype-dev \
+        lcms2-dev \
+        openjpeg-dev \
+        tiff-dev \
+        tk-dev \
+        tcl-dev \
+        libffi-dev
 
-# Requirements are installed here to ensure they will be cached.
-COPY ./requirements /requirements
-RUN pip install -r /requirements/local.txt
+# Install pip packages
+COPY ./requirements.txt ./code/requirements.txt
+RUN pip install -r /code/requirements.txt
 
-COPY ./compose/production/django/entrypoint /entrypoint
-RUN sed -i 's/\r//' /entrypoint
-RUN chmod +x /entrypoint
+# Cleanup build artifacts
+RUN find /usr/local -type f -name "*.pyc" -delete \
+    && find /usr/local -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 
-COPY ./compose/local/django/start /start
-RUN sed -i 's/\r//' /start
-RUN chmod +x /start
+FROM python:3.6-alpine AS release
 
-WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-ENTRYPOINT ["/entrypoint"]
+RUN mkdir /code
+
+# Install runtime dependencies
+RUN apk update \
+    && apk add --no-cache \
+        libpq \
+        libjpeg \
+        zlib \
+        freetype \
+        libffi \
+        gettext \
+        postgresql-client \
+        curl \
+    && rm -rf /var/cache/apk/*
+
+# Copy installed packages from builder
+COPY --from=builder /usr/local /usr/local
+
+# Copy application code
+COPY . /code/
+
+WORKDIR /code
+
+# Default command - can be overridden
+CMD ["gunicorn", "-c", "/code/gunicorn.conf.py", "config.wsgi"]
+
+ENV X_IMAGE_TAG=v0.0.0
+
+LABEL Description="Shakespeare Census Image" Vendor="REVSYS"
+LABEL Version="${X_IMAGE_TAG}"

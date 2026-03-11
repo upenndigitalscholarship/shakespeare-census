@@ -3,7 +3,7 @@ from django.apps import AppConfig
 
 class UsersAppConfig(AppConfig):
 
-    name = "shakespeare_census.users"
+    name = "users"
     verbose_name = "Users"
 
     def ready(self):

@@ -1,7 +1,7 @@
 import pytest
 
-from shakespeare_census.users.forms import UserCreationForm
-from shakespeare_census.users.tests.factories import UserFactory
+from users.forms import UserCreationForm
+from users.tests.factories import UserFactory
 
 pytestmark = pytest.mark.django_db
 

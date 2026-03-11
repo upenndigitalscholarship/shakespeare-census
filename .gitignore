@@ -272,7 +272,11 @@ tags
 ### Project template
 
 shakespeare_census/media/
+media/
 
 .pytest_cache/
 .env
 .envs/*
+
+# Database backups
+*.sql

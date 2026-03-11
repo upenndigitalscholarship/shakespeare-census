@@ -1,0 +1,65 @@
+x-common-service: &common-service
+  build:
+    context: .
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_started
+
+services:
+
+  db:
+    image: postgres:17
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
+    expose:
+      - "5432"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready",
+          "--host=db",
+          "--username=postgres"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    init: true
+    user: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql
+
+  redis:
+    image: "redis:alpine"
+    expose:
+      - "6379"
+    init: true
+    volumes:
+      - redis-data:/data
+    stop_signal: SIGKILL
+
+  utility:
+    <<: *common-service
+    env_file: .env
+    init: true
+    volumes:
+      - .:/code
+    working_dir: /code
+
+  web:
+    <<: *common-service
+    env_file: .env
+    init: true
+    volumes:
+      - .:/code
+    working_dir: /code
+    ports:
+      - "8000:8000"
+    command: "/code/compose-start.sh"
+    tty: true
+
+volumes:
+  postgres-data:
+  redis-data:

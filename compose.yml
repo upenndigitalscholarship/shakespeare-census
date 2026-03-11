@@ -23,7 +23,7 @@ services:
           "--host=db",
           "--username=postgres"
         ]
-      interval: 10s
+      interval: 1s
       timeout: 5s
       retries: 5
     init: true

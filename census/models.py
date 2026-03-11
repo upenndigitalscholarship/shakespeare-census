@@ -72,7 +72,7 @@ def create_user_detail(sender, instance, created, **kwargs):
 
 class Title(models.Model):
     title = models.CharField(max_length=128, unique=True)
-    Apocryphal = models.BooleanField(default=False)
+    apocryphal = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title

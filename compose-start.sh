@@ -1,7 +1,6 @@
-#!/usr/bin/env bash
-set -o errexit
-set -o pipefail
-set -o nounset
+#!/bin/sh
+set -e
+set -u
 
-python manage.py migrate
+#python manage.py migrate
 python manage.py runserver 0.0.0.0:8000

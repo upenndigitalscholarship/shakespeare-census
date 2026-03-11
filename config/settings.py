@@ -18,7 +18,7 @@ env = environ.Env()
 # container orchestration to inject values into the running environment
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
 if READ_DOT_ENV_FILE:
-    env.read_env(BASE_DIR / ".env")
+    env.read_env(str(BASE_DIR / ".env"))
     print("The .env file has been loaded. See config/settings.py for more information")
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -46,7 +46,7 @@ SECRET_KEY = env(
 )
 
 # Hosts
-host_list = env.list("DJANGO_ALLOWED_HOSTS", default="localhost,0.0.0.0,127.0.0.1")
+host_list = env.list("DJANGO_ALLOWED_HOSTS", default=["localhost", "0.0.0.0", "127.0.0.1"])
 ALLOWED_HOSTS = [el.strip() for el in host_list]
 
 # Site ID
@@ -180,8 +180,17 @@ SOCIALACCOUNT_ADAPTER = "users.adapters.SocialAccountAdapter"
 #############################################################################
 # Database
 #############################################################################
-DATABASES = {"default": env.db("DATABASE_URL")}
-DATABASES["default"]["ATOMIC_REQUESTS"] = True
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "HOST": env("PGHOST"),
+        "NAME": env("PGDATABASE"),
+        "PASSWORD": env("PGPASSWORD", default=""),
+        "PORT": env.int("PGPORT", default=5432),
+        "USER": env("PGUSER"),
+        "ATOMIC_REQUESTS": True,
+    }
+}
 
 # Connection pooling for production
 if not DEBUG:

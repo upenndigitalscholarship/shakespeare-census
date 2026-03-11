@@ -2,13 +2,7 @@
 
 A database of early editions of plays attributed to Shakespeare.
 
-[![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg)](https://github.com/pydanny/cookiecutter-django/)
-
 License: MIT
-
-## Settings
-
-Moved to [settings](http://cookiecutter-django.readthedocs.io/en/latest/settings.html).
 
 ## Basic Commands
 
@@ -56,6 +50,3 @@ Moved to [Live reloading and SASS compilation](http://cookiecutter-django.readth
 
 The following details how to deploy this application.
 
-### Docker
-
-See detailed [cookiecutter-django Docker documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-with-docker.html).

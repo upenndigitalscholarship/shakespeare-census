@@ -1,3 +1,9 @@
+# Frank Wiles (REVSYS) specific ignores 
+attic/
+.envrc
+.local_env 
+.env 
+
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/

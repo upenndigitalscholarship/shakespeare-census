@@ -79,57 +79,57 @@ class Title(models.Model):
 
 class Edition (models.Model):
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
-    Edition_number = models.CharField(max_length=20, unique=False, null=True, blank=True)
-    Edition_format = models.CharField(max_length=10, null=True, blank=True)
+    edition_number = models.CharField(max_length=20, unique=False, null=True, blank=True)
+    edition_format = models.CharField(max_length=10, null=True, blank=True)
     def __str__(self):
-        return "%s Edition %s" % (self.title, self.Edition_number)
+        return "%s Edition %s" % (self.title, self.edition_number)
 
 class Issue (models.Model):
     edition = models.ForeignKey(Edition, unique=False, on_delete=models.CASCADE)
-    STC_Wing = models.CharField(max_length=20)
-    ESTC = models.CharField(max_length=20)
+    stc_wing = models.CharField(max_length=20)
+    estc = models.CharField(max_length=20)
     year = models.CharField(max_length=20, default=None)
     start_date = models.IntegerField(default=0)
     end_date = models.IntegerField(default=0)
-    DEEP = models.CharField(max_length=20, default='', null=True, blank=True)
+    deep = models.CharField(max_length=20, default='', null=True, blank=True)
     notes = models.TextField(null=True, blank=True, default=None)
-    Variant_Description = models.CharField(max_length=1000, null=True, blank=True)
-    def ESTC_as_list(self):
-        estc_list = self.ESTC.split('; ')
+    variant_description = models.CharField(max_length=1000, null=True, blank=True)
+    def estc_as_list(self):
+        estc_list = self.estc.split('; ')
         return [(estc, (i + 1) == len(estc_list))
                 for i, estc in enumerate(estc_list)]
 
-    def DEEP_as_list(self):
-        deep_list = self.DEEP.split('; ')
+    def deep_as_list(self):
+        deep_list = self.deep.split('; ')
         return [(depp, (i + 1) == len(deep_list))
                 for i, deep in enumerate(deep_list)]
 
 
     def __str__(self):
-        return "%s ESTC %s" % (self.edition, self.ESTC)
+        return "%s ESTC %s" % (self.edition, self.estc)
 
 # Essential fields for all copies.
 class BaseCopy(models.Model):
     location = models.ForeignKey(Location, unique=False, null=True, blank=True, on_delete=models.CASCADE)
     issue = models.ForeignKey(Issue, unique=False, on_delete=models.CASCADE)
-    thumbnail_URL = models.URLField(max_length=500, null=True, blank=True)
-    NSC = models.CharField(max_length=40, default='', null=True, blank=True)
-    Shelfmark = models.CharField(max_length=500, default=None, null=True, blank=True)
-    Height = models.FloatField(default=0, null=True)
-    Width = models.FloatField(default=0, null=True)
-    Marginalia = models.TextField(null=True, blank=True, default=None)
-    Condition = models.CharField(max_length=500, default=None, null=True, blank=True)
-    Binding = models.CharField(max_length=500, default=None, null=True, blank=True)
-    Binder = models.CharField(max_length=500, default=None, null=True, blank=True)
-    Bookplate = models.CharField(max_length=500, default=None, null=True, blank=True)
-    Bookplate_Location = models.CharField(max_length=500, default=None, null=True, blank=True)
-    Bartlett1939 = models.IntegerField(default=0, null=True)
-    Bartlett1939_Notes = models.TextField(null=True, blank=True, default=None)
-    Bartlett1916 = models.IntegerField(default=0, null=True)
-    Bartlett1916_Notes = models.TextField(null=True, blank=True, default=None)
-    Lee_Notes = models.TextField(null=True, blank=True, default=None)
-    Local_Notes = models.TextField(null=True, blank=True, default=None)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_submitted_copies", 
+    thumbnail_url = models.URLField(max_length=500, null=True, blank=True)
+    nsc = models.CharField(max_length=40, default='', null=True, blank=True)
+    shelfmark = models.CharField(max_length=500, default=None, null=True, blank=True)
+    height = models.FloatField(default=0, null=True)
+    width = models.FloatField(default=0, null=True)
+    marginalia = models.TextField(null=True, blank=True, default=None)
+    condition = models.CharField(max_length=500, default=None, null=True, blank=True)
+    binding = models.CharField(max_length=500, default=None, null=True, blank=True)
+    binder = models.CharField(max_length=500, default=None, null=True, blank=True)
+    bookplate = models.CharField(max_length=500, default=None, null=True, blank=True)
+    bookplate_location = models.CharField(max_length=500, default=None, null=True, blank=True)
+    bartlett1939 = models.IntegerField(default=0, null=True)
+    bartlett1939_notes = models.TextField(null=True, blank=True, default=None)
+    bartlett1916 = models.IntegerField(default=0, null=True)
+    bartlett1916_notes = models.TextField(null=True, blank=True, default=None)
+    lee_notes = models.TextField(null=True, blank=True, default=None)
+    local_notes = models.TextField(null=True, blank=True, default=None)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_submitted_copies",
                                    default=None, null=True, blank=True, on_delete=models.CASCADE)
     prov_info = models.TextField(null=True, blank=True, default=None)
     bibliography = models.TextField(null=True, blank=True, default=None)

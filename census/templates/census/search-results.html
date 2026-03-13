@@ -47,9 +47,9 @@
         {% for copy in result_list %}
         <tr>
             <td>
-                {% if copy.NSC and copy.NSC != '0' %}
+                {% if copy.nsc and copy.nsc != '0' %}
                     <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
-                        {{ copy.NSC }}
+                        {{ copy.nsc }}
                     </a>
                 {% else %}
                     &nbsp;
@@ -75,7 +75,7 @@
                 </a>
             </td>
             <td>
-                <a href="{% url 'copy' copy.issue.id %}" target="_blank" title="Go to Edition">{{ copy.issue.STC_Wing }}&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-external-link-alt"></i></a>
+                <a href="{% url 'copy' copy.issue.id %}" target="_blank" title="Go to Edition">{{ copy.issue.stc_wing }}&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-external-link-alt"></i></a>
             </td>
         </tr>
         {% endfor %}

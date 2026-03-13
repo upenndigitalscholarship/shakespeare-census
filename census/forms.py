@@ -87,21 +87,21 @@ class EditProfileForm(forms.ModelForm):
         return data
 
 _submission_field_order = [
-    'location', 'Shelfmark', 'prov_info', 'Marginalia', 'Binding', 
-    'Binder', 'Bookplate', 'Bookplate_Location', 'Local_Notes',
-    'Height', 'Width']
+    'location', 'shelfmark', 'prov_info', 'marginalia', 'binding',
+    'binder', 'bookplate', 'bookplate_location', 'local_notes',
+    'height', 'width']
 
 class LibrarianCopySubmissionForm(forms.ModelForm):
-    Shelfmark = forms.CharField(label="Shelfmark", required=True)
+    shelfmark = forms.CharField(label="Shelfmark", required=True)
     prov_info = forms.CharField(label="Provenance Information", widget=forms.Textarea, required=False)
-    Marginalia = forms.CharField(label="Marginalia", widget=forms.Textarea, required=False)
-    Binding = forms.CharField(label="Binding", required=False)
-    Binder = forms.CharField(label="Binder", required=False)
-    Bookplate = forms.CharField(label="Bookplate", required=False)
-    Bookplate_Location = forms.CharField(label="Bookplate Location", required=False)
-    Local_Notes = forms.CharField(label="Other Copy-specific Details", widget=forms.Textarea, required=False)
-    Height = forms.DecimalField(label="Height (cm)", initial=0, required=False)
-    Width = forms.DecimalField(label="Width (cm)", initial=0, required=False)
+    marginalia = forms.CharField(label="Marginalia", widget=forms.Textarea, required=False)
+    binding = forms.CharField(label="Binding", required=False)
+    binder = forms.CharField(label="Binder", required=False)
+    bookplate = forms.CharField(label="Bookplate", required=False)
+    bookplate_location = forms.CharField(label="Bookplate Location", required=False)
+    local_notes = forms.CharField(label="Other Copy-specific Details", widget=forms.Textarea, required=False)
+    height = forms.DecimalField(label="Height (cm)", initial=0, required=False)
+    width = forms.DecimalField(label="Width (cm)", initial=0, required=False)
 
     field_order = _submission_field_order[1:]
     class Meta:
@@ -110,16 +110,16 @@ class LibrarianCopySubmissionForm(forms.ModelForm):
 
 class AdminCopySubmissionForm(forms.ModelForm):
     location = forms.ModelChoiceField(queryset=Location.objects.order_by('name'), required=True)
-    Shelfmark = forms.CharField(label="Shelfmark", required=True)
+    shelfmark = forms.CharField(label="Shelfmark", required=True)
     prov_info = forms.CharField(label="Provenance Information", widget=forms.Textarea, required=False)
-    Marginalia = forms.CharField(label="Marginalia", widget=forms.Textarea, required=False)
-    Binding = forms.CharField(label="Binding", required=False)
-    Binder = forms.CharField(label="Binder", required=False)
-    Bookplate = forms.CharField(label="Bookplate", required=False)
-    Bookplate_Location = forms.CharField(label="Bookplate Location", required=False)
-    Local_Notes = forms.CharField(label="Other Copy-specific Details", widget=forms.Textarea, required=False)
-    Height = forms.DecimalField(label="Height (cm)", initial=0, required=False)
-    Width = forms.DecimalField(label="Width (cm)", initial=0, required=False)
+    marginalia = forms.CharField(label="Marginalia", widget=forms.Textarea, required=False)
+    binding = forms.CharField(label="Binding", required=False)
+    binder = forms.CharField(label="Binder", required=False)
+    bookplate = forms.CharField(label="Bookplate", required=False)
+    bookplate_location = forms.CharField(label="Bookplate Location", required=False)
+    local_notes = forms.CharField(label="Other Copy-specific Details", widget=forms.Textarea, required=False)
+    height = forms.DecimalField(label="Height (cm)", initial=0, required=False)
+    width = forms.DecimalField(label="Width (cm)", initial=0, required=False)
 
     field_order = _submission_field_order
     class Meta:

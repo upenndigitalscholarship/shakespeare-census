@@ -38,7 +38,7 @@
                         <tr id="section {{ copy.id }}">
                             <td>{{ copy.issue.edition.title }}
                                 ({{ copy.issue.year }}) --
-                                STC/Wing: {{ copy.issue.STC_Wing }}
+                                STC/Wing: {{ copy.issue.stc_wing }}
                             </td>
                             <td>
                                 <span class="copy_data button-inline" id="data{{copy.id}}" data-form="{% url 'draft_copy_data' copy.id %}" title="Details">

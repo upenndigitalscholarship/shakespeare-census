@@ -67,11 +67,11 @@ def title_sort_key(title_object):
         return strip_article(title)
 
 def issue_sort_key(i):
-    ed_number = i.edition.Edition_number
+    ed_number = i.edition.edition_number
     return int(ed_number) if ed_number.isdigit() else float('inf')
 
 def copy_sort_key(c):
-    return (strip_article(c.location.name), c.Shelfmark)
+    return (strip_article(c.location.name), c.shelfmark)
 
 def convert_year_range(year):
     if '-' in year:
@@ -100,7 +100,7 @@ def search(request):
 
     if field == 'stc' or field is None and value:
         field = 'STC / Wing'
-        result_list = copy_list.filter(issue__STC_Wing__icontains=value)
+        result_list = copy_list.filter(issue__stc_wing__icontains=value)
         print(result_list)
     elif field == 'year' and value:
         field = 'Year'
@@ -115,7 +115,7 @@ def search(request):
         result_list = copy_list.filter(location__name__icontains=value)
     elif field == 'bartlett' and value:
         field = 'Bartlett'
-        result_list = copy_list.filter(Q(Bartlett1916=value) | Q(Bartlett1939=value))
+        result_list = copy_list.filter(Q(bartlett1916=value) | Q(bartlett1939=value))
 
     result_list = sorted(result_list, key=search_sort_key)
 
@@ -161,7 +161,7 @@ def detail(request, id):
     if id == '5' or id == '6':
         editions = list(selected_title.edition_set.all())
         extra_ed = list(models.Title.objects.get(pk='39').edition_set.all())
-        extra_ed[0].Edition_number = '3'
+        extra_ed[0].edition_number = '3'
         editions.extend(extra_ed)
     else:
         editions = list(selected_title.edition_set.all())
@@ -182,7 +182,7 @@ def detail(request, id):
 # showing all copies for an issue
 def copy(request, id):
     selected_issue = models.Issue.objects.get(pk=id)
-    all_copies = models.CanonicalCopy.objects.filter(issue__id=id).order_by('location__name', 'Shelfmark')
+    all_copies = models.CanonicalCopy.objects.filter(issue__id=id).order_by('location__name', 'shelfmark')
     all_copies = sorted(all_copies, key=copy_sort_key)
     template = loader.get_template('census/copy.html')
     context = {
@@ -256,7 +256,7 @@ def add_copy(request, id):
     template = loader.get_template('census/copy_submission.html')
     selected_issue = models.Issue.objects.get(pk=id)
     
-    data = {'issue_id': id, 'Shelfmark': '', 'Local_Notes': '', 'prov_info': ''}
+    data = {'issue_id': id, 'shelfmark': '', 'local_notes': '', 'prov_info': ''}
     if request.method == 'POST':
         if request.user.is_staff:
             copy_submission_form = forms.AdminCopySubmissionForm(request.POST, initial=data)
@@ -385,8 +385,8 @@ def update_draft_copy(request, id):
     template = loader.get_template('census/copy_submission.html')
     canonical_copy = models.CanonicalCopy.objects.get(pk=id)
     selected_copy = get_draft_if_exists(canonical_copy)
-    init_fields = ['Shelfmark', 'Local_Notes', 'prov_info', 
-                   'Height', 'Width', 'Marginalia', 'Binding', 'Binder']
+    init_fields = ['shelfmark', 'local_notes', 'prov_info',
+                   'height', 'width', 'marginalia', 'binding', 'binder']
     data = {f: getattr(selected_copy, f) for f in init_fields}
     if request.method == 'POST':
         copy_form = forms.LibrarianCopySubmissionForm(request.POST)

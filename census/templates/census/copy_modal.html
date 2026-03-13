@@ -5,58 +5,58 @@
         </div>
         <div class="modal-body">
           <!--div class="half-one"-->
-            <p align="left"><strong>SC #</strong>: {% if copy.NSC and copy.NSC != '0' %}{{ copy.NSC }}{% endif %}</p>
+            <p align="left"><strong>SC #</strong>: {% if copy.nsc and copy.nsc != '0' %}{{ copy.nsc }}{% endif %}</p>
 
             <p align="left"><strong>Location</strong>: {% if copy.location %}{{ copy.location.name }}{% endif %}</p>
 
-            <p align="left"><strong>Shelfmark</strong>: {% if copy.Shelfmark and copy.Shelfmark != "[Shelfmark not available]" %}{{ copy.Shelfmark }}{% endif %}</p>
+            <p align="left"><strong>Shelfmark</strong>: {% if copy.shelfmark and copy.shelfmark != "[Shelfmark not available]" %}{{ copy.shelfmark }}{% endif %}</p>
 
             {% if copy.issue.notes %}
             <p align="left"><strong>Notes about issue</strong>: {{ copy.issue.notes }}</p>
             {% endif %}
 
-            {% if copy.Local_Notes %}
-            <p align="left"><strong>Copy-specific notes</strong>: {{ copy.Local_Notes}}</p>
+            {% if copy.local_notes %}
+            <p align="left"><strong>Copy-specific notes</strong>: {{ copy.local_notes}}</p>
             {% endif %}
 
             {% if copy.prov_info %}
             <p align="left"><strong>Provenance</strong>: {{ copy.prov_info}}</p>
             {% endif %}
 
-            {% if copy.Height %}
-            <p align="left"><strong>Height</strong>: {{ copy.Height }} cm</p>
+            {% if copy.height %}
+            <p align="left"><strong>Height</strong>: {{ copy.height }} cm</p>
             {% endif %}
 
-            {% if copy.Width %}
-            <p align="left"><strong>Width</strong>: {{ copy.Width }} cm</p>
+            {% if copy.width %}
+            <p align="left"><strong>Width</strong>: {{ copy.width }} cm</p>
             {% endif %}
 
-            {% if copy.Marginalia %}
-            <p align="left"><strong>Marginalia</strong>: {{ copy.Marginalia }}</p>
+            {% if copy.marginalia %}
+            <p align="left"><strong>Marginalia</strong>: {{ copy.marginalia }}</p>
             {% endif %}
 
-            {% if copy.Condition %}
-            <p align="left"><strong>Condition</strong>: {{ copy.Condition }}</p>
+            {% if copy.condition %}
+            <p align="left"><strong>Condition</strong>: {{ copy.condition }}</p>
             {% endif %}
 
-            {% if copy.Binding %}
-            <p align="left"><strong>Binding</strong>: {{ copy.Binding }}</p>
+            {% if copy.binding %}
+            <p align="left"><strong>Binding</strong>: {{ copy.binding }}</p>
             {% endif %}
 
-            {% if copy.Binder %}
-            <p align="left"><strong>Binder</strong>: {{ copy.Binder }}</p>
+            {% if copy.binder %}
+            <p align="left"><strong>Binder</strong>: {{ copy.binder }}</p>
             {% endif %}
 
-            {% if copy.Bookplate %}
-            <p align="left"><strong>Bookplate</strong>: {{ copy.Bookplate }}</p>
+            {% if copy.bookplate %}
+            <p align="left"><strong>Bookplate</strong>: {{ copy.bookplate }}</p>
             {% endif %}
 
-            {% if copy.Bookplate_Location %}
-            <p align="left"><strong>Bookplate location</strong>: {{ copy.Bookplate_Location }}</p>
+            {% if copy.bookplate_location %}
+            <p align="left"><strong>Bookplate location</strong>: {{ copy.bookplate_location }}</p>
             {% endif %}
 
-            {% if copy.Lee_Notes %}
-            <p align="left"><strong>Lee notes</strong>: {{ copy.Lee_Notes }}</p>
+            {% if copy.lee_notes %}
+            <p align="left"><strong>Lee notes</strong>: {{ copy.lee_notes }}</p>
             {% endif %}
 
             {% if copy.bibliography %}
@@ -66,20 +66,20 @@
 
 
           <!--div class="half-two"--->
-            {% if copy.Bartlett1939 %}
-            <p align="left"><strong>Bartlett 1939 #</strong>: {{ copy.Bartlett1939 }}</p>
+            {% if copy.bartlett1939 %}
+            <p align="left"><strong>Bartlett 1939 #</strong>: {{ copy.bartlett1939 }}</p>
             {% endif %}
 
-            {% if copy.Bartlett1916 %}
-            <p align="left"><strong>Bartlett 1916 #</strong>: {{ copy.Bartlett1916 }}</p>
+            {% if copy.bartlett1916 %}
+            <p align="left"><strong>Bartlett 1916 #</strong>: {{ copy.bartlett1916 }}</p>
             {% endif %}
 
-            {% if copy.Bartlett1939_Notes %}
-            <p align="left"><strong>Bartlett 1939 notes</strong>: {{ copy.Bartlett1939_Notes }}</p>
+            {% if copy.bartlett1939_notes %}
+            <p align="left"><strong>Bartlett 1939 notes</strong>: {{ copy.bartlett1939_notes }}</p>
             {% endif %}
 
-            {% if copy.Bartlett1916_Notes %}
-            <p align="left"><strong>Bartlett 1916 notes</strong>: {{ copy.Bartlett1916_Notes }}</p>
+            {% if copy.bartlett1916_notes %}
+            <p align="left"><strong>Bartlett 1916 notes</strong>: {{ copy.bartlett1916_notes }}</p>
             {% endif %}
           <!--div--->
 

@@ -19,27 +19,27 @@
         <tr>
             <td class="play-issue-header">
                 <span>
-                    {% if selected_issue.edition.Edition_number.isdigit %}
-                    {{ selected_issue.edition.Edition_number|add:"0"|ordinal }}&nbsp;Edition
+                    {% if selected_issue.edition.edition_number.isdigit %}
+                    {{ selected_issue.edition.edition_number|add:"0"|ordinal }}&nbsp;Edition
                     {% else %}
-                    {{ selected_issue.edition.Edition_number.capitalize }}
+                    {{ selected_issue.edition.edition_number.capitalize }}
                     {% endif %}
-                    {% if selected_issue.edition.Edition_format %}
-                    ({{ selected_issue.edition.Edition_format }})
+                    {% if selected_issue.edition.edition_format %}
+                    ({{ selected_issue.edition.edition_format }})
                     {% endif %}
                 </span>
                 <span>{{ selected_issue.year }}</span>
-                <span>STC&#8239;/&#8239;Wing:&nbsp;{{ selected_issue.STC_Wing }}</span>
+                <span>STC&#8239;/&#8239;Wing:&nbsp;{{ selected_issue.stc_wing }}</span>
 
-                {% if selected_issue.ESTC and selected_issue.ESTC != 'not in ESTC' and ';' not in selected_issue.ESTC %}
+                {% if selected_issue.estc and selected_issue.estc != 'not in ESTC' and ';' not in selected_issue.estc %}
 
                      <span class="static-text">
-                        ESTC:&nbsp;<a href="http://estc.bl.uk/{{ selected_issue.ESTC }}" target="_blank">{{ selected_issue.ESTC }}</a>
+                        ESTC:&nbsp;<a href="http://estc.bl.uk/{{ selected_issue.estc }}" target="_blank">{{ selected_issue.estc }}</a>
                     </span>
-                {% elif ';' in selected_issue.ESTC %}
+                {% elif ';' in selected_issue.estc %}
                      <span class="static-text">
                        ESTC:
-                       {% for estc, is_last in selected_issue.ESTC_as_list %}
+                       {% for estc, is_last in selected_issue.estc_as_list %}
                           {% if not is_last %}
                               &nbsp;<a href="http://estc.bl.uk/{{ estc }}" target="_blank">{{ estc }}</a>;
                           {% else %}
@@ -54,14 +54,14 @@
                     </span>
                 {% endif %}
 
-                {% if selected_issue.DEEP and selected_issue.DEEP != '0' and ';' not in selected_issue.DEEP %}
+                {% if selected_issue.deep and selected_issue.deep != '0' and ';' not in selected_issue.deep %}
                     <span class="static-text">
-                        DEEP:&nbsp;<a href="http://deep.sas.upenn.edu/viewrecord.php?deep_id={{ selected_issue.DEEP }}" target="_blank">{{ selected_issue.DEEP }}</a>
+                        DEEP:&nbsp;<a href="http://deep.sas.upenn.edu/viewrecord.php?deep_id={{ selected_issue.deep }}" target="_blank">{{ selected_issue.deep }}</a>
                     </span>
-                {% elif ';' in selected_issue.DEEP%}
+                {% elif ';' in selected_issue.deep%}
                     <span class="static-text">
                       DEEP:
-                      {% for deep, is_last in selected_issue.DEEP_as_list %}
+                      {% for deep, is_last in selected_issue.deep_as_list %}
                      {% if not is_last %}
                       &nbsp;<a href="http://deep.sas.upenn.edu/viewrecord.php?deep_id={{ deep }}" target="_blank">{{ deep }}</a>;
                       {% else %}

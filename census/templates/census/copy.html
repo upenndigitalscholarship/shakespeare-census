@@ -41,11 +41,11 @@
                 </a>
             </td>
             <td>
-                {% if not copy.Shelfmark or copy.Shelfmark == "[Shelfmark not available]" or copy.Shelfmark is None %}
+                {% if not copy.shelfmark or copy.shelfmark == "[Shelfmark not available]" or copy.shelfmark is None %}
                     &nbsp;
                 {% else %}
                     <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
-                        {{ copy.Shelfmark }}
+                        {{ copy.shelfmark }}
                     </a>
                 {% endif %}
             </td>

@@ -34,7 +34,7 @@
                     <tr id="copy-record-{{ copy.id }}">
                         <td>{{ copy.issue.edition.title }}
                             ({{ copy.issue.year }}) --
-                            STC/Wing: {{ copy.issue.STC_Wing }}
+                            STC/Wing: {{ copy.issue.stc_wing }}
                         </td>
                         <td>
 			    <a class="copy_data button-inline" id="original-details-{{ copy.id }}" href="#" data-form="{% url 'copy_data' copy.parent.id %}" title="Details">Original Version</a>

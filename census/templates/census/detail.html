@@ -40,10 +40,10 @@
         <tr>
             <td>
                 <a href="{% url 'copy' issue.id %}">
-                    {% if issue.edition.Edition_number.isdigit %}
-                    {{ issue.edition.Edition_number }}
+                    {% if issue.edition.edition_number.isdigit %}
+                    {{ issue.edition.edition_number }}
                     {% else %}
-                    {{ issue.edition.Edition_number.capitalize }}
+                    {{ issue.edition.edition_number.capitalize }}
                     {% endif %}
                 </a>
                 {% if user.is_staff %}
@@ -51,9 +51,9 @@
                 {% endif %}
             </td>
             <td><a href="{% url 'copy' issue.id %}">{{ issue.year }}</a></td>
-            <td><a href="{% url 'copy' issue.id %}">{{ issue.STC_Wing }}</a></td>
+            <td><a href="{% url 'copy' issue.id %}">{{ issue.stc_wing }}</a></td>
             <td>
-                <a href="{% url 'copy' issue.id %}">{{ issue.ESTC }}</a>
+                <a href="{% url 'copy' issue.id %}">{{ issue.estc }}</a>
                 {% if user.is_staff %}
                 <span class="note">[<a href="{% url 'admin:census_issue_change' issue.id %}">Edit issue</a>]</span>
                 {% endif %}

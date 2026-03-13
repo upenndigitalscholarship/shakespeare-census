@@ -1,65 +1,63 @@
-FROM python:3.6-alpine AS builder
+FROM python:3.12-slim AS builder-py
 
 ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONPATH=/code
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONWARNINGS=ignore
 
-# Install build dependencies
-RUN apk update \
-    && apk add --virtual build-deps \
-        gcc \
-        python3-dev \
-        musl-dev \
-        postgresql-dev \
-        jpeg-dev \
-        zlib-dev \
-        freetype-dev \
-        lcms2-dev \
-        openjpeg-dev \
-        tiff-dev \
-        tk-dev \
-        tcl-dev \
-        libffi-dev
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=apt \
+    apt update && \
+    apt install -y build-essential gcc git libpq-dev postgresql-client
 
-# Install pip packages
+RUN --mount=type=cache,target=/root/.cache,id=pip \
+    pip install -U pip uv
+
 COPY ./requirements.txt ./code/requirements.txt
-RUN pip install -r /code/requirements.txt
 
-# Cleanup build artifacts
-RUN find /usr/local -type f -name "*.pyc" -delete \
-    && find /usr/local -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+RUN --mount=type=cache,target=/root/.cache,id=pip \
+    python -m uv pip install --system --requirement /code/requirements.txt
 
-FROM python:3.6-alpine AS release
+RUN rm -f `find . -iname "*.c"` && \
+    rm -f `find . -iname "*.pyc"` && \
+    rm -f `find . -iname "*.pyx"` && \
+    rm -rf `find . -iname "__pycache__"`
+
+FROM python:3.12-slim AS release
 
 ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONPATH=/code
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONWARNINGS=ignore
 
 RUN mkdir /code
 
-# Install runtime dependencies
-RUN apk update \
-    && apk add --no-cache \
-        libpq \
-        libjpeg \
-        zlib \
-        freetype \
-        libffi \
-        gettext \
-        postgresql-client \
-        curl \
-    && rm -rf /var/cache/apk/*
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=apt \
+    apt update && \
+    apt install --no-install-recommends -y git libpq-dev curl gnupg2 lsb-release apt-transport-https ca-certificates
 
-# Copy installed packages from builder
-COPY --from=builder /usr/local /usr/local
+# Add the PGDG apt repo
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
 
-# Copy application code
+# Trust the PGDG gpg key
+RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc| gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
+
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=apt \
+    apt update \
+    && apt -y install postgresql-17 git libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder-py /usr/local /usr/local
 COPY . /code/
 
 WORKDIR /code
 
-# Default command - can be overridden
+# Tailwind download
+RUN DATABASE_URL=sqlite://:memory: SECRET_KEY=nope-nope-nope python -m manage tailwind --skip-checks download_cli
+RUN DATABASE_URL=sqlite://:memory: SECRET_KEY=nope-nope-nope python -m manage tailwind --skip-checks build
+
 CMD ["gunicorn", "-c", "/code/gunicorn.conf.py", "config.wsgi"]
 
 ENV X_IMAGE_TAG=v0.0.0
 
-LABEL Description="Shakespeare Census Image" Vendor="REVSYS"
+LABEL Description="AlphaKit Image" Vendor="REVSYS"
 LABEL Version="${X_IMAGE_TAG}"

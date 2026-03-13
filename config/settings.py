@@ -73,7 +73,6 @@ THIRD_PARTY_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "rest_framework",
     "django_extensions",
 ]
 
@@ -84,10 +83,6 @@ LOCAL_APPS = [
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
-
-# Debug toolbar (local only)
-if DEBUG:
-    INSTALLED_APPS += ["debug_toolbar"]
 
 #############################################################################
 # Middleware
@@ -102,9 +97,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
-if DEBUG:
-    MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 
 #############################################################################
 # Templates
@@ -239,7 +231,6 @@ SESSION_COOKIE_HTTPONLY = True
 #############################################################################
 LANGUAGE_CODE = "en-us"
 USE_I18N = True
-USE_L10N = True
 TIME_ZONE = "UTC"
 USE_TZ = True
 
@@ -325,23 +316,6 @@ if not DEBUG:
     )
     SECURE_BROWSER_XSS_FILTER = True
     X_FRAME_OPTIONS = "DENY"
-
-#############################################################################
-# Debug Toolbar
-#############################################################################
-if DEBUG:
-    DEBUG_TOOLBAR_CONFIG = {
-        "DISABLE_PANELS": [
-            "debug_toolbar.panels.redirects.RedirectsPanel",
-        ],
-        "SHOW_TEMPLATE_CONTEXT": True,
-    }
-    INTERNAL_IPS = ["127.0.0.1", "10.0.2.2"]
-    if env("USE_DOCKER", default="no") == "yes":
-        import socket
-
-        hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
-        INTERNAL_IPS += [ip[:-1] + "1" for ip in ips]
 
 #############################################################################
 # Logging

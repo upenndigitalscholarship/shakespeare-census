@@ -1,0 +1,32 @@
+Django>5.2,<6.0
+environs[django]
+django-extensions
+django-types
+Pillow
+whitenoise
+psycopg[binary]
+django-db-geventpool
+django-model-utils
+django-crispy-forms==1.7.2  
+gevent
+gunicorn 
+django-tailwind-cli==4.5.1
+
+ipython 
+vinnie 
+django-structlog
+django-tracer
+python-json-logger
+rich
+structlog
+
+# Testing
+# ------------------------------------------------------------------------------
+pytest
+pytest-sugar
+pytest-django 
+pytest-cov 
+django-test-plus 
+
+model-bakery 
+factory-boy==2.11.1  

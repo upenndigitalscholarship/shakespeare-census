@@ -73,6 +73,9 @@ def create_user_detail(sender, instance, created, **kwargs):
 class Title(models.Model):
     title = models.CharField(max_length=128, unique=True)
     apocryphal = models.BooleanField(default=False)
+    image = models.CharField(max_length=500, null=True, blank=True)
+    hidden = models.BooleanField(default=False)
+    issue = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
@@ -129,8 +132,13 @@ class BaseCopy(models.Model):
     bartlett1916 = models.IntegerField(default=0, null=True)
     bartlett1916_notes = models.TextField(null=True, blank=True, default=None)
     bartlett_ms_annotations = models.TextField(null=True, blank=True, default=None)
+    lee = models.IntegerField(default=0, null=True, blank=True)
     lee_notes = models.TextField(null=True, blank=True, default=None)
+    rasmussen_west = models.IntegerField(default=0, null=True, blank=True)
+    rasmussen_west_notes = models.TextField(null=True, blank=True, default=None)
     local_notes = models.TextField(null=True, blank=True, default=None)
+    in_early_sammelband = models.BooleanField(default=False)
+    fragment = models.BooleanField(default=False)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_submitted_copies",
                                    default=None, null=True, blank=True, on_delete=models.CASCADE)
     prov_info = models.TextField(null=True, blank=True, default=None)
@@ -169,6 +177,52 @@ class HistoryCopy(BaseCopy):
     date_created = models.DateTimeField(auto_now_add=True)
     class Meta:
         verbose_name_plural = "History copies"
+
+# Copy records that were rejected from draft review.
+class RejectedDraftCopy(BaseCopy):
+    parent = models.ForeignKey(CanonicalCopy, related_name='rejected_drafts', default=None, null=True, on_delete=models.CASCADE)
+    date_created = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        verbose_name_plural = "Rejected draft copies"
+
+### Provenance ###
+
+class ProvenanceName(models.Model):
+    name = models.CharField(max_length=255, null=True, blank=True)
+    bio = models.CharField(max_length=255, null=True, blank=True)
+    viaf = models.CharField(max_length=255, null=True, blank=True)
+    start_century = models.CharField(max_length=255, null=True, blank=True)
+    end_century = models.CharField(max_length=255, null=True, blank=True)
+    gender = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return self.name or ""
+    class Meta:
+        verbose_name_plural = "Provenance names"
+
+class ProvenanceOwnership(models.Model):
+    copy = models.ForeignKey(CanonicalCopy, on_delete=models.CASCADE)
+    owner = models.ForeignKey(ProvenanceName, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = "Provenance ownerships"
+
+### Forms ###
+
+class CopyForm(models.Model):
+    shelfmark = models.CharField(max_length=500, null=True, blank=True)
+    height = models.FloatField(null=True, blank=True)
+    width = models.FloatField(null=True, blank=True)
+    rasmussen_west = models.IntegerField(null=True, blank=True)
+    rasmussen_west_notes = models.TextField(null=True, blank=True)
+    prov_info = models.TextField(null=True, blank=True)
+    marginalia = models.TextField(null=True, blank=True)
+    binding = models.CharField(max_length=500, null=True, blank=True)
+    binder = models.CharField(max_length=500, null=True, blank=True)
+    location = models.ForeignKey(Location, null=True, blank=True, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = "Copy forms"
 
 
 ### Copy Management Classes/Callables ###

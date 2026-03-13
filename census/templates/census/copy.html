@@ -19,14 +19,16 @@
             <th class="terse"> SC # </th>
             <th class="detailed"> Location </th>
             <th> Shelfmark </th>
-            <th class="terse"> Verified? </th>
+            <th></th>
+            <th></th>
+            <th></th>
         </tr>
         {% for copy in all_copies %}
         <tr>
             <td>
-                {% if copy.NSC and copy.NSC != '0' %}
+                {% if copy.nsc and copy.nsc != '0' %}
                     <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
-                        {{ copy.NSC }}
+                        {{ copy.nsc }}
                     </a>
                 {% else %}
                     &nbsp;
@@ -56,6 +58,22 @@
               	    <span title="The existence of this copy has not been verified; location entered by an administrator." class="unverified-symbol">&#x20E0;</span>
                 {% else %}
               	    <span title="This existence of this copy at the location has been verified." class="verified-symbol">&#x2713;</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if copy.fragment %}
+                    <span title="This copy is a fragment." class="fragment-symbol"><i class="fa fa-industry"></i></span>
+                {% else %}
+                    &nbsp;
+                {% endif %}
+            </td>
+            <td>
+                {% if copy.digital_facsimile_url %}
+                    <a href="{{ copy.digital_facsimile_url }}" target="_blank" title="View digital facsimile">
+                        <i class="fa fa-camera-retro"></i>
+                    </a>
+                {% else %}
+                    &nbsp;
                 {% endif %}
             </td>
         </tr>

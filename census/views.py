@@ -119,12 +119,16 @@ def search(request):
 
     result_list = sorted(result_list, key=search_sort_key)
 
+    copy_count = len([c for c in result_list if not c.fragment])
+    fragment_count = len([c for c in result_list if c.fragment])
+
     context = {
         'icon_path': get_icon_path(),
         'value': value,
         'field': field,
         'result_list': result_list,
-        'copy_count': len(result_list)
+        'copy_count': copy_count,
+        'fragment_count': fragment_count,
     }
 
     return HttpResponse(template.render(context, request))
@@ -168,7 +172,9 @@ def detail(request, id):
 
     issues = [issue for ed in editions for issue in ed.issue_set.all()]
     issues.sort(key=issue_sort_key)
-    copy_count = models.CanonicalCopy.objects.filter(issue__id__in=[i.id for i in issues]).count()
+    all_copies = models.CanonicalCopy.objects.filter(issue__id__in=[i.id for i in issues])
+    copy_count = all_copies.filter(fragment=False).count()
+    fragment_count = all_copies.filter(fragment=True).count()
     template = loader.get_template('census/detail.html')
     context = {
         'icon_path': get_icon_path(id),
@@ -176,6 +182,7 @@ def detail(request, id):
         'issues': issues,
         'title': selected_title,
         'copy_count': copy_count,
+        'fragment_count': fragment_count,
     }
     return HttpResponse(template.render(context, request))
 
@@ -184,9 +191,13 @@ def copy(request, id):
     selected_issue = models.Issue.objects.get(pk=id)
     all_copies = models.CanonicalCopy.objects.filter(issue__id=id).order_by('location__name', 'shelfmark')
     all_copies = sorted(all_copies, key=copy_sort_key)
+    copy_count = len([c for c in all_copies if not c.fragment])
+    fragment_count = len([c for c in all_copies if c.fragment])
     template = loader.get_template('census/copy.html')
     context = {
         'all_copies': all_copies,
+        'copy_count': copy_count,
+        'fragment_count': fragment_count,
         'selected_issue': selected_issue,
         'icon_path': get_icon_path(selected_issue.edition.title.id),
         'title': selected_issue.edition.title

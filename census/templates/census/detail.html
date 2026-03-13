@@ -25,7 +25,7 @@
         </tr>
         <tr>
             <td class="play-issue-header">
-                <span>Extant copies: {{ copy_count }} </span>
+                <span>Extant copies: {{ copy_count }}{% if fragment_count > 0 %}, plus {{ fragment_count }} fragment{{ fragment_count|pluralize }}{% endif %}</span>
             </td>
         </tr>
     </table>

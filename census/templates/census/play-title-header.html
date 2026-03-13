@@ -34,16 +34,16 @@
                 {% if selected_issue.estc and selected_issue.estc != 'not in ESTC' and ';' not in selected_issue.estc %}
 
                      <span class="static-text">
-                        ESTC:&nbsp;<a href="http://estc.bl.uk/{{ selected_issue.estc }}" target="_blank">{{ selected_issue.estc }}</a>
+                        ESTC:&nbsp;<a href="https://datb.cerl.org/estc/{{ selected_issue.estc }}" target="_blank">{{ selected_issue.estc }}</a>
                     </span>
                 {% elif ';' in selected_issue.estc %}
                      <span class="static-text">
                        ESTC:
                        {% for estc, is_last in selected_issue.estc_as_list %}
                           {% if not is_last %}
-                              &nbsp;<a href="http://estc.bl.uk/{{ estc }}" target="_blank">{{ estc }}</a>;
+                              &nbsp;<a href="https://datb.cerl.org/estc/{{ estc }}" target="_blank">{{ estc }}</a>;
                           {% else %}
-                              &nbsp;<a href="http://estc.bl.uk/{{ estc }}" target="_blank">{{ estc }}</a>
+                              &nbsp;<a href="https://datb.cerl.org/estc/{{ estc }}" target="_blank">{{ estc }}</a>
                           {% endif %}
                        {% endfor %}
                      </span>
@@ -56,16 +56,16 @@
 
                 {% if selected_issue.deep and selected_issue.deep != '0' and ';' not in selected_issue.deep %}
                     <span class="static-text">
-                        DEEP:&nbsp;<a href="http://deep.sas.upenn.edu/viewrecord.php?deep_id={{ selected_issue.deep }}" target="_blank">{{ selected_issue.deep }}</a>
+                        DEEP:&nbsp;<a href="https://deepplaybooks.org/{{ selected_issue.deep }}/" target="_blank">{{ selected_issue.deep }}</a>
                     </span>
                 {% elif ';' in selected_issue.deep%}
                     <span class="static-text">
                       DEEP:
                       {% for deep, is_last in selected_issue.deep_as_list %}
                      {% if not is_last %}
-                      &nbsp;<a href="http://deep.sas.upenn.edu/viewrecord.php?deep_id={{ deep }}" target="_blank">{{ deep }}</a>;
+                      &nbsp;<a href="https://deepplaybooks.org/{{ deep }}/" target="_blank">{{ deep }}</a>;
                       {% else %}
-                      &nbsp;<a href="http://deep.sas.upenn.edu/viewrecord.php?deep_id={{ deep }}" target="_blank">{{ deep }}</a>
+                      &nbsp;<a href="https://deepplaybooks.org/{{ deep }}/" target="_blank">{{ deep }}</a>
                       {% endif %}
                       {% endfor %}
                     </span>
@@ -79,7 +79,7 @@
         <tr>
             <td class="play-issue-header">
                 {% if all_copies %}
-                    <span>Extant copies: {{ all_copies|length }} </span>
+                    <span>Extant copies: {{ copy_count }}{% if fragment_count > 0 %}, plus {{ fragment_count }} fragment{{ fragment_count|pluralize }}{% endif %}</span>
                     {% if user.is_authenticated %}
                         <span class="note">
                             [

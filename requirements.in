@@ -7,7 +7,6 @@ whitenoise
 psycopg[binary]
 django-db-geventpool
 django-model-utils
-django-crispy-forms==1.7.2  
 gevent
 gunicorn 
 django-tailwind-cli==4.5.1

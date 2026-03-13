@@ -3,7 +3,6 @@ from django.shortcuts import render, get_object_or_404
 from django.template import loader
 from . import models
 from . import forms
-from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout, authenticate, login
 from django.db.models import Q
@@ -11,11 +10,6 @@ from django.urls import reverse
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.template.loader import render_to_string
-from .tokens import account_activation_token
-from django.core.mail import EmailMessage
 
 from datetime import datetime
 
@@ -247,39 +241,6 @@ def copy_data(request, copy_id):
     return HttpResponse(template.render(context, request))
 
 
-def login_user(request):
-    template = loader.get_template("census/login.html")
-    if request.method == "POST":
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user_account = authenticate(username=username, password=password)
-        if user_account is not None:
-            login(request, user_account)
-            next_url = request.POST.get(
-                "next", default=request.GET.get("next", "login.html")
-            )
-            if request.GET.get("next") is None:
-                if user_account.is_staff:
-                    next_url = "admin_start"
-                else:
-                    next_url = "librarian_start"
-
-            return HttpResponseRedirect(next_url)
-        else:
-            return HttpResponse(template.render({"failed": True}, request))
-    else:
-        return HttpResponse(
-            template.render({"next": request.GET.get("next", "")}, request)
-        )
-
-
-def logout_user(request):
-    template = loader.get_template("census/logout.html")
-    logout(request)
-    context = {}
-    return HttpResponse(template.render(context, request))
-
-
 # expected to be called when a new copy is submitted; displaying the copy info
 def copy_info(request, copy_id):
     template = loader.get_template("census/copy_info.html")
@@ -337,16 +298,6 @@ def add_copy(request, id):
         "icon_path": get_icon_path(selected_issue.edition.title.id),
     }
 
-    return HttpResponse(template.render(context, request))
-
-
-@login_required()
-def display_user_profile(request):
-    template = loader.get_template("census/user_profile.html")
-    current_user = request.user
-    context = {
-        "user": current_user,
-    }
     return HttpResponse(template.render(context, request))
 
 
@@ -580,10 +531,6 @@ def admin_verify_single_edit_reject(request):
 
     except IOError:
         print("something wrong with id, may be it does not exist at all?")
-    # selected_draft_set = models.CanonicalCopy.objects.get(pk=copy_id).drafts
-    # if selected_draft_set:
-    #     selected_draft = selected_draft_set.get()
-    #     selected_draft.delete()
 
     return HttpResponse("success")
 
@@ -630,27 +577,6 @@ def admin_verify_copy(request):
     return HttpResponse("success")
 
 
-@login_required()
-def edit_profile(request):
-    template = loader.get_template("census/edit_profile.html")
-    current_user = request.user
-    if request.method == "POST":
-        profile_form = forms.EditProfileForm(request.POST, instance=current_user)
-        if profile_form.is_valid():
-            profile_form.save()
-            return HttpResponseRedirect(reverse("profile"))
-        else:
-            messages.error(request, "The username you've inputted is already taken!")
-    else:
-        profile_form = forms.EditProfileForm(instance=current_user)
-
-    context = {
-        "user": current_user,
-        "profile_form": profile_form,
-    }
-    return HttpResponse(template.render(context, request))
-
-
 # used by aja
 @login_required
 def create_draftcopy(request):
@@ -680,67 +606,6 @@ def location_incorrect(request):
     draft_copy.save()
 
     return HttpResponse("success!")
-
-
-def signup(request):
-    if request.method == "POST":
-        form = forms.SignupForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False
-            user.save()
-            user_detail = models.UserDetail(user=user)
-            user_detail.affiliation = form.cleaned_data["affiliation"]
-            user_detail.save()
-            current_site = get_current_site(request)
-            email_validation = False
-            if email_validation:
-                message = render_to_string(
-                    "signup/acc_active_email.html",
-                    {
-                        "user": user,
-                        "domain": current_site.domain,
-                        "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                        "token": account_activation_token.make_token(user),
-                    },
-                )
-                mail_subject = "Activate your librarian account."
-                to_email = form.cleaned_data.get("email")
-                email = EmailMessage(mail_subject, message, to=[to_email])
-                email.send()
-                return HttpResponse(
-                    "Please confirm your email address to complete the registration"
-                )
-            else:
-                messages.success(
-                    request,
-                    "Your account request has been received. A site administrator may contact you for more information.",
-                )
-                return HttpResponseRedirect(reverse("signup"))
-
-    else:
-        form = forms.SignupForm()
-
-    return render(request, "signup/signup.html", {"form": form})
-
-
-def activate(request, uidb64, token):
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-        user_detail = models.UserDetail.objects.get(user=user)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
-        user_detail = None
-    if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        user_detail.save()
-        login(request, user)
-
-        return HttpResponseRedirect("/profile")
-    else:
-        return HttpResponse("Activation link is invalid!")
 
 
 def contact(request):

@@ -1,22 +1,9 @@
 {% load static %}
 
 <div class="tucked">
-    {% if user.is_authenticated %}
-    <a class="button" href="{% url 'logout_user' %}">Sign out</a>
-    <a class="button" href="{% url 'profile' %}">Account</a>
     {% if user.is_staff %}
     <a class="button" href="{% url 'admin_start' %}">Site Administration</a>
-    {% else %}
-    <a class="button" href="{% url 'librarian_start' %}">Library Holdings</a>
     {% endif %}
-    {% else %}
-
-    <a class="button" href="{% url 'login_user' %}">Sign in</a>
-    {% endif %}
-    <!-- A normally-styled non-breaking space always appears here
-        to ensure consistent div height. Someday we will find the
-        correct way to do this. -->
-        &nbsp;
 </div>
 <table class="title">
     <tr>

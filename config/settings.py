@@ -1,18 +1,16 @@
-"""
-Django settings for Shakespeare Census project.
-
-Uses environment variables for configuration.
-"""
-
+import logging
+import sys
 from pathlib import Path
 
-import environ
+import environs
+import structlog
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).parent.parent
 APPS_DIR = BASE_DIR
 
-env = environ.Env()
+env = environs.Env()
 
 # We shouldn't load a .env file in any deployed context and rely on the
 # container orchestration to inject values into the running environment
@@ -29,6 +27,8 @@ LOCAL_DEVELOPMENT = env.bool("LOCAL_DEVELOPMENT", default=False)
 
 # Whether or not to use whitenoise
 USE_WHITENOISE = env.bool("USE_WHITENOISE", default=DEBUG)
+
+LOG_LEVEL = env.log_level("LOG_LEVEL", default="INFO")
 
 #############################################################################
 # Main Settings
@@ -69,11 +69,8 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    "crispy_forms",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
     "django_extensions",
+    "django_tailwind_cli",
 ]
 
 # Local apps
@@ -137,7 +134,6 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 #############################################################################
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 AUTH_USER_MODEL = "users.User"
@@ -163,32 +159,24 @@ LOGIN_URL = "account_login"
 #     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 # ]
 
-# django-allauth
-ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
-ACCOUNT_AUTHENTICATION_METHOD = "username"
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_ADAPTER = "users.adapters.AccountAdapter"
-SOCIALACCOUNT_ADAPTER = "users.adapters.SocialAccountAdapter"
-
 #############################################################################
 # Database
 #############################################################################
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "HOST": env("PGHOST"),
-        "NAME": env("PGDATABASE"),
-        "PASSWORD": env("PGPASSWORD", default=""),
-        "PORT": env.int("PGPORT", default=5432),
-        "USER": env("PGUSER"),
-        "ATOMIC_REQUESTS": True,
+try:
+    DATABASES = {"default": env.dj_db_url("DATABASE_URL")}
+except (ImproperlyConfigured, environs.EnvError):
+    DATABASES = {
+        "default": {
+            "ENGINE": "django_db_geventpool.backends.postgresql_psycopg3",
+            "HOST": env("PGHOST"),
+            "NAME": env("PGDATABASE"),
+            "PASSWORD": env("PGPASSWORD", default=""),
+            "PORT": env.int("PGPORT", default=5432),
+            "USER": env("PGUSER"),
+            "CONN_MAX_AGE": 0,
+            "OPTIONS": {"MAX_CONNS": 25},
+        }
     }
-}
-
-# Connection pooling for production
-if not DEBUG:
-    DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)
 
 # Default auto field
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
@@ -196,35 +184,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 #############################################################################
 # Cache
 #############################################################################
-if DEBUG:
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-            "LOCATION": "",
-        }
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "",
     }
-else:
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": env("REDIS_URL"),
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                "IGNORE_EXCEPTIONS": True,
-            },
-        }
-    }
-
-#############################################################################
-# Sessions
-#############################################################################
-SESSION_ENGINE = (
-    "django.contrib.sessions.backends.cached_db"
-    if not DEBUG
-    else "django.contrib.sessions.backends.db"
-)
-SESSION_COOKIE_SECURE = not DEBUG
-SESSION_COOKIE_HTTPONLY = True
+}
 
 #############################################################################
 # Internationalization
@@ -257,20 +222,6 @@ if USE_WHITENOISE:
 MEDIA_URL = "/media/"
 MEDIA_ROOT = str(BASE_DIR / "media")
 
-# Production media storage (S3)
-if not DEBUG:
-    INSTALLED_APPS += ["storages"]
-    AWS_ACCESS_KEY_ID = env("DJANGO_AWS_ACCESS_KEY_ID")
-    AWS_SECRET_ACCESS_KEY = env("DJANGO_AWS_SECRET_ACCESS_KEY")
-    AWS_STORAGE_BUCKET_NAME = env("DJANGO_AWS_STORAGE_BUCKET_NAME")
-    AWS_QUERYSTRING_AUTH = False
-    _AWS_EXPIRY = 60 * 60 * 24 * 7
-    AWS_S3_OBJECT_PARAMETERS = {
-        "CacheControl": f"max-age={_AWS_EXPIRY}, s-maxage={_AWS_EXPIRY}, must-revalidate",
-    }
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-    MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
-
 #############################################################################
 # Email
 #############################################################################
@@ -283,68 +234,84 @@ EMAIL_SUBJECT_PREFIX = env(
     "DJANGO_EMAIL_SUBJECT_PREFIX", default="[Shakespeare Census]"
 )
 
-if DEBUG:
-    EMAIL_BACKEND = env(
-        "DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"
-    )
-    EMAIL_HOST = "localhost"
-    EMAIL_PORT = 1025
-else:
-    # Production uses Anymail/Mailgun
-    INSTALLED_APPS += ["anymail"]
-    EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-    ANYMAIL = {
-        "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
-        "MAILGUN_SENDER_DOMAIN": env("MAILGUN_DOMAIN"),
-    }
+EMAIL_BACKEND = env(
+    "DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"
+)
+EMAIL_HOST = "localhost"
+EMAIL_PORT = 1025
+
 
 #############################################################################
-# Security (Production only)
+# Logging setup
 #############################################################################
-if not DEBUG:
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    SECURE_SSL_REDIRECT = env.bool("DJANGO_SECURE_SSL_REDIRECT", default=True)
-    CSRF_COOKIE_SECURE = True
-    CSRF_COOKIE_HTTPONLY = True
-    SECURE_HSTS_SECONDS = 60
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool(
-        "DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", default=True
-    )
-    SECURE_HSTS_PRELOAD = env.bool("DJANGO_SECURE_HSTS_PRELOAD", default=True)
-    SECURE_CONTENT_TYPE_NOSNIFF = env.bool(
-        "DJANGO_SECURE_CONTENT_TYPE_NOSNIFF", default=True
-    )
-    SECURE_BROWSER_XSS_FILTER = True
-    X_FRAME_OPTIONS = "DENY"
+root = logging.getLogger()
+root.setLevel(logging.INFO)
 
-#############################################################################
-# Logging
-#############################################################################
+handler = logging.StreamHandler(sys.stderr)
+root.addHandler(handler)
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "verbose": {
-            "format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s",
+        "json_formatter": {
+            "()": structlog.stdlib.ProcessorFormatter,
+            "processor": structlog.processors.JSONRenderer(),
+        },
+        "plain_console": {
+            "()": structlog.stdlib.ProcessorFormatter,
+            "processor": structlog.dev.ConsoleRenderer(),
+        },
+        "key_value": {
+            "()": structlog.stdlib.ProcessorFormatter,
+            "processor": structlog.processors.KeyValueRenderer(
+                key_order=["event", "logger"]
+            ),
         },
     },
     "handlers": {
         "console": {
-            "level": "DEBUG",
             "class": "logging.StreamHandler",
-            "formatter": "verbose",
+            "formatter": "plain_console",
+        },
+        "json": {
+            "class": "logging.StreamHandler",
+            "formatter": "json_formatter",
+        },
+        "kv": {
+            "class": "logging.StreamHandler",
+            "formatter": "key_value",
         },
     },
     "loggers": {
-        "django.security.DisallowedHost": {
-            "level": "ERROR",
-            "handlers": ["console"],
-            "propagate": True,
+        "": {
+            "handlers": ["json"],
+            "level": LOG_LEVEL,  # defaults to INFO
         },
     },
 }
 
+# Configure struct log
+structlog.configure(
+    processors=[
+        structlog.contextvars.merge_contextvars,
+        structlog.stdlib.filter_by_level,
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.stdlib.add_logger_name,
+        structlog.stdlib.add_log_level,
+        structlog.stdlib.PositionalArgumentsFormatter(),
+        structlog.processors.StackInfoRenderer(),
+        structlog.processors.format_exc_info,
+        structlog.processors.UnicodeDecoder(),
+        structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+    ],
+    logger_factory=structlog.stdlib.LoggerFactory(),
+    cache_logger_on_first_use=True,
+)
+
 #############################################################################
-# Migrations
+# Tailwind CLI Settings
 #############################################################################
-MIGRATION_MODULES = {"sites": "census.sites_migrations"}
+TAILWIND_CLI_AUTOMATIC_DOWNLOAD = False
+TAILWIND_CLI_DIST_CSS = "css/tailwind.min.css"
+TAILWIND_CLI_SRC_CSS = "css/input.css"

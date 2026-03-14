@@ -4,8 +4,6 @@ x-common-service: &common-service
   depends_on:
     db:
       condition: service_healthy
-    redis:
-      condition: service_started
 
 services:
 
@@ -31,15 +29,6 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql
 
-  redis:
-    image: "redis:alpine"
-    expose:
-      - "6379"
-    init: true
-    volumes:
-      - redis-data:/data
-    stop_signal: SIGKILL
-
   utility:
     <<: *common-service
     env_file: .env
@@ -62,4 +51,3 @@ services:
 
 volumes:
   postgres-data:
-  redis-data:

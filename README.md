@@ -37,7 +37,6 @@ The `compose.yml` defines four services:
 - **web** — Django app, exposed on port 8000
 - **utility** — same image as web, used for one-off commands (migrations, tests, shell)
 - **db** — PostgreSQL 17
-- **redis** — Redis (alpine)
 
 ## License
 

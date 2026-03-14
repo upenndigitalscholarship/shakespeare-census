@@ -6,6 +6,8 @@ attic/
 
 ### Python template
 .django_tailwind_cli/
+.playwright_cache/
+.playwright-mcp/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

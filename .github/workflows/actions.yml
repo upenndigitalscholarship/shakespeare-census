@@ -20,31 +20,24 @@ env:
 jobs:
 
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:15.1
+        image: postgres:17
         env:
           POSTGRES_DB: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
         ports: ['5432:5432']
-      redis:
-        image: redis
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
       - name: Git - Get Sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Set up Python 3.12
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           cache: 'pip'
           python-version: '3.12'
@@ -69,12 +62,12 @@ jobs:
   build:
     needs: [test]
     name: Build and Publish Docker image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
 
     steps:
       - name: Git - Get Sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -83,7 +76,7 @@ jobs:
           git fetch --depth=1 origin +refs/tags/*:refs/tags/* || true
 
       - name: Set up Python 3.12
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           cache: 'pip'
           python-version: '3.12'

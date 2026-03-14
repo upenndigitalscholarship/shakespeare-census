@@ -53,6 +53,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip uv
           python -m uv pip install --system --requirement requirements.txt
+          python -m uv pip install --system prek
 
       - name: Test with pytest
         env:
@@ -61,9 +62,9 @@ jobs:
         run: |
           python -m pytest
 
-      - name: Lints with pre-commit
+      - name: Lints with prek
         run: |
-          python -m pre_commit run --all-files
+          python -m prek run --all-files
 
   build:
     needs: [test]

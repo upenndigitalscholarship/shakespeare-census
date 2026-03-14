@@ -1,0 +1,47 @@
+default_language_version:
+  python: python311
+
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-toml
+        alias: autoformat
+      - id: check-yaml
+      - id: end-of-file-fixer
+        alias: autoformat
+      - id: trailing-whitespace
+        alias: autoformat
+
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.6
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+-   repo: https://github.com/adamchainz/django-upgrade
+    rev: 1.30.0
+    hooks:
+    - id: django-upgrade
+      args: [--target-version, "5.0"]
+
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v3.21.2
+    hooks:
+      - id: pyupgrade
+        args: [--py311-plus]
+
+-   repo: https://github.com/rtts/djhtml
+    rev: 3.0.10
+    hooks:
+      - id: djhtml
+
+-   repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.25
+    hooks:
+      - id: validate-pyproject

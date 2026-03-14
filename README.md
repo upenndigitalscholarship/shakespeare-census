@@ -1,52 +1,44 @@
 # Shakespeare Census
 
+[![CI](https://github.com/upenndigitalscholarship/shakespeare-census/actions/workflows/actions.yml/badge.svg?branch=master)](https://github.com/upenndigitalscholarship/shakespeare-census/actions/workflows/actions.yml)
+
 A database of early editions of plays attributed to Shakespeare.
 
-License: MIT
+**Stack:** Python 3.12 · Django 5.2 · PostgreSQL 17 · Redis
 
-## Basic Commands
+[Visit Website](https://shakespearecensus.org/)
 
-### Setting Up Your Users
+## Setup
 
-* To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
-
-* To create a **superuser account**, use this command:
+Requires [Docker](https://docs.docker.com/get-docker/) and [just](https://github.com/casey/just).
 
 ```bash
-$ python manage.py createsuperuser
+just bootstrap
 ```
 
-For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
+This copies `.env-dist` to `.env` (if missing) and builds all Docker containers.
 
-### Type Checks
+## Common Commands
 
-Running type checks with mypy:
+| Command | Description |
+|---|---|
+| `just up` | Start the development server at http://localhost:8000 |
+| `just rebuild` | Force-remove and rebuild containers from scratch |
+| `just test` | Run the pytest test suite |
+| `just console` | Open a bash shell in the utility container |
+| `just bootstrap` | First-time setup: copy `.env` and build containers |
 
-```bash
-$ mypy shakespeare_census
-```
+Run `just` with no arguments to see all available commands.
 
-### Test Coverage
+## Services
 
-To run the tests, check your test coverage, and generate an HTML coverage report:
+The `compose.yml` defines four services:
 
-```bash
-$ coverage run -m pytest
-$ coverage html
-$ open htmlcov/index.html
-```
+- **web** — Django app, exposed on port 8000
+- **utility** — same image as web, used for one-off commands (migrations, tests, shell)
+- **db** — PostgreSQL 17
+- **redis** — Redis (alpine)
 
-#### Running Tests with pytest
+## License
 
-```bash
-$ pytest
-```
-
-### Live Reloading and Sass CSS Compilation
-
-Moved to [Live reloading and SASS compilation](http://cookiecutter-django.readthedocs.io/en/latest/live-reloading-and-sass-compilation.html).
-
-## Deployment
-
-The following details how to deploy this application.
-
+MIT

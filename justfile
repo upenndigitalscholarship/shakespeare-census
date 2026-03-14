@@ -54,7 +54,7 @@ bootstrap:
 
 # Run pre-commit hooks on all files to check code quality and formatting
 @lint:
-    pre-commit run --all-files
+    prek run --all-files
 
 # Start the development server with Docker Compose (accepts additional arguments)
 @server *ARGS:

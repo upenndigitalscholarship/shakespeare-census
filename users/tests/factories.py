@@ -1,11 +1,11 @@
-from typing import Any, Sequence
+from typing import Any
+from collections.abc import Sequence
 
 from django.contrib.auth import get_user_model
 from factory import DjangoModelFactory, Faker, post_generation
 
 
 class UserFactory(DjangoModelFactory):
-
     username = Faker("user_name")
     email = Faker("email")
     name = Faker("name")
@@ -19,9 +19,7 @@ class UserFactory(DjangoModelFactory):
             digits=True,
             upper_case=True,
             lower_case=True,
-        ).generate(
-            extra_kwargs={}
-        )
+        ).generate(extra_kwargs={})
         self.set_password(password)
 
     class Meta:

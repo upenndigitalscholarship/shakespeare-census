@@ -5,9 +5,8 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('census', '0024_lowercase_field_names_additions'),
+        ("census", "0024_lowercase_field_names_additions"),
     ]
 
     operations = [
@@ -16,123 +15,214 @@ class Migration(migrations.Migration):
             state_operations=[
                 # New models that exist in DB but not in ORM
                 migrations.CreateModel(
-                    name='CopyForm',
+                    name="CopyForm",
                     fields=[
-                        ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                        ('shelfmark', models.CharField(blank=True, max_length=500, null=True)),
-                        ('height', models.FloatField(blank=True, null=True)),
-                        ('width', models.FloatField(blank=True, null=True)),
-                        ('rasmussen_west', models.IntegerField(blank=True, null=True)),
-                        ('rasmussen_west_notes', models.TextField(blank=True, null=True)),
-                        ('prov_info', models.TextField(blank=True, null=True)),
-                        ('marginalia', models.TextField(blank=True, null=True)),
-                        ('binding', models.CharField(blank=True, max_length=500, null=True)),
-                        ('binder', models.CharField(blank=True, max_length=500, null=True)),
-                        ('location', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='census.Location')),
+                        (
+                            "id",
+                            models.AutoField(
+                                auto_created=True,
+                                primary_key=True,
+                                serialize=False,
+                                verbose_name="ID",
+                            ),
+                        ),
+                        (
+                            "shelfmark",
+                            models.CharField(blank=True, max_length=500, null=True),
+                        ),
+                        ("height", models.FloatField(blank=True, null=True)),
+                        ("width", models.FloatField(blank=True, null=True)),
+                        ("rasmussen_west", models.IntegerField(blank=True, null=True)),
+                        (
+                            "rasmussen_west_notes",
+                            models.TextField(blank=True, null=True),
+                        ),
+                        ("prov_info", models.TextField(blank=True, null=True)),
+                        ("marginalia", models.TextField(blank=True, null=True)),
+                        (
+                            "binding",
+                            models.CharField(blank=True, max_length=500, null=True),
+                        ),
+                        (
+                            "binder",
+                            models.CharField(blank=True, max_length=500, null=True),
+                        ),
+                        (
+                            "location",
+                            models.ForeignKey(
+                                blank=True,
+                                null=True,
+                                on_delete=django.db.models.deletion.CASCADE,
+                                to="census.Location",
+                            ),
+                        ),
                     ],
                     options={
-                        'verbose_name_plural': 'Copy forms',
+                        "verbose_name_plural": "Copy forms",
                     },
                 ),
                 migrations.CreateModel(
-                    name='ProvenanceName',
+                    name="ProvenanceName",
                     fields=[
-                        ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                        ('name', models.CharField(blank=True, max_length=255, null=True)),
-                        ('bio', models.CharField(blank=True, max_length=255, null=True)),
-                        ('viaf', models.CharField(blank=True, max_length=255, null=True)),
-                        ('start_century', models.CharField(blank=True, max_length=255, null=True)),
-                        ('end_century', models.CharField(blank=True, max_length=255, null=True)),
-                        ('gender', models.CharField(blank=True, max_length=255, null=True)),
+                        (
+                            "id",
+                            models.AutoField(
+                                auto_created=True,
+                                primary_key=True,
+                                serialize=False,
+                                verbose_name="ID",
+                            ),
+                        ),
+                        (
+                            "name",
+                            models.CharField(blank=True, max_length=255, null=True),
+                        ),
+                        (
+                            "bio",
+                            models.CharField(blank=True, max_length=255, null=True),
+                        ),
+                        (
+                            "viaf",
+                            models.CharField(blank=True, max_length=255, null=True),
+                        ),
+                        (
+                            "start_century",
+                            models.CharField(blank=True, max_length=255, null=True),
+                        ),
+                        (
+                            "end_century",
+                            models.CharField(blank=True, max_length=255, null=True),
+                        ),
+                        (
+                            "gender",
+                            models.CharField(blank=True, max_length=255, null=True),
+                        ),
                     ],
                     options={
-                        'verbose_name_plural': 'Provenance names',
+                        "verbose_name_plural": "Provenance names",
                     },
                 ),
                 migrations.CreateModel(
-                    name='ProvenanceOwnership',
+                    name="ProvenanceOwnership",
                     fields=[
-                        ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                        ('copy', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='census.CanonicalCopy')),
-                        ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='census.ProvenanceName')),
+                        (
+                            "id",
+                            models.AutoField(
+                                auto_created=True,
+                                primary_key=True,
+                                serialize=False,
+                                verbose_name="ID",
+                            ),
+                        ),
+                        (
+                            "copy",
+                            models.ForeignKey(
+                                on_delete=django.db.models.deletion.CASCADE,
+                                to="census.CanonicalCopy",
+                            ),
+                        ),
+                        (
+                            "owner",
+                            models.ForeignKey(
+                                on_delete=django.db.models.deletion.CASCADE,
+                                to="census.ProvenanceName",
+                            ),
+                        ),
                     ],
                     options={
-                        'verbose_name_plural': 'Provenance ownerships',
+                        "verbose_name_plural": "Provenance ownerships",
                     },
                 ),
                 migrations.CreateModel(
-                    name='RejectedDraftCopy',
+                    name="RejectedDraftCopy",
                     fields=[
-                        ('basecopy_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='census.BaseCopy')),
-                        ('date_created', models.DateTimeField(auto_now_add=True)),
-                        ('parent', models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='rejected_drafts', to='census.CanonicalCopy')),
+                        (
+                            "basecopy_ptr",
+                            models.OneToOneField(
+                                auto_created=True,
+                                on_delete=django.db.models.deletion.CASCADE,
+                                parent_link=True,
+                                primary_key=True,
+                                serialize=False,
+                                to="census.BaseCopy",
+                            ),
+                        ),
+                        ("date_created", models.DateTimeField(auto_now_add=True)),
+                        (
+                            "parent",
+                            models.ForeignKey(
+                                default=None,
+                                null=True,
+                                on_delete=django.db.models.deletion.CASCADE,
+                                related_name="rejected_drafts",
+                                to="census.CanonicalCopy",
+                            ),
+                        ),
                     ],
                     options={
-                        'verbose_name_plural': 'Rejected draft copies',
+                        "verbose_name_plural": "Rejected draft copies",
                     },
-                    bases=('census.basecopy',),
+                    bases=("census.basecopy",),
                 ),
-
                 # Title fields that exist in DB
                 migrations.RemoveField(
-                    model_name='title',
-                    name='Apocryphal',
+                    model_name="title",
+                    name="Apocryphal",
                 ),
                 migrations.AddField(
-                    model_name='title',
-                    name='apocryphal',
+                    model_name="title",
+                    name="apocryphal",
                     field=models.BooleanField(default=False),
                 ),
                 migrations.AddField(
-                    model_name='title',
-                    name='hidden',
+                    model_name="title",
+                    name="hidden",
                     field=models.BooleanField(default=False),
                 ),
                 migrations.AddField(
-                    model_name='title',
-                    name='image',
+                    model_name="title",
+                    name="image",
                     field=models.CharField(blank=True, max_length=500, null=True),
                 ),
                 migrations.AddField(
-                    model_name='title',
-                    name='issue',
+                    model_name="title",
+                    name="issue",
                     field=models.BooleanField(default=False),
                 ),
-
                 # BaseCopy fields that exist in DB
                 migrations.AddField(
-                    model_name='basecopy',
-                    name='bartlett_ms_annotations',
+                    model_name="basecopy",
+                    name="bartlett_ms_annotations",
                     field=models.TextField(blank=True, default=None, null=True),
                 ),
                 migrations.AddField(
-                    model_name='basecopy',
-                    name='digital_facsimile_url',
+                    model_name="basecopy",
+                    name="digital_facsimile_url",
                     field=models.URLField(blank=True, max_length=500, null=True),
                 ),
                 migrations.AddField(
-                    model_name='basecopy',
-                    name='fragment',
+                    model_name="basecopy",
+                    name="fragment",
                     field=models.BooleanField(default=False),
                 ),
                 migrations.AddField(
-                    model_name='basecopy',
-                    name='in_early_sammelband',
+                    model_name="basecopy",
+                    name="in_early_sammelband",
                     field=models.BooleanField(default=False),
                 ),
                 migrations.AddField(
-                    model_name='basecopy',
-                    name='lee',
+                    model_name="basecopy",
+                    name="lee",
                     field=models.IntegerField(blank=True, default=0, null=True),
                 ),
                 migrations.AddField(
-                    model_name='basecopy',
-                    name='rasmussen_west',
+                    model_name="basecopy",
+                    name="rasmussen_west",
                     field=models.IntegerField(blank=True, default=0, null=True),
                 ),
                 migrations.AddField(
-                    model_name='basecopy',
-                    name='rasmussen_west_notes',
+                    model_name="basecopy",
+                    name="rasmussen_west_notes",
                     field=models.TextField(blank=True, default=None, null=True),
                 ),
             ],
@@ -148,18 +238,17 @@ class Migration(migrations.Migration):
                     reverse_sql='ALTER TABLE census_title RENAME COLUMN apocryphal TO "Apocryphal";',
                 ),
                 migrations.RunSQL(
-                    sql='ALTER TABLE census_title ADD COLUMN IF NOT EXISTS hidden boolean NOT NULL DEFAULT false;',
-                    reverse_sql='ALTER TABLE census_title DROP COLUMN IF EXISTS hidden;',
+                    sql="ALTER TABLE census_title ADD COLUMN IF NOT EXISTS hidden boolean NOT NULL DEFAULT false;",
+                    reverse_sql="ALTER TABLE census_title DROP COLUMN IF EXISTS hidden;",
                 ),
                 migrations.RunSQL(
-                    sql='ALTER TABLE census_title ADD COLUMN IF NOT EXISTS image varchar(500) NULL;',
-                    reverse_sql='ALTER TABLE census_title DROP COLUMN IF EXISTS image;',
+                    sql="ALTER TABLE census_title ADD COLUMN IF NOT EXISTS image varchar(500) NULL;",
+                    reverse_sql="ALTER TABLE census_title DROP COLUMN IF EXISTS image;",
                 ),
                 migrations.RunSQL(
-                    sql='ALTER TABLE census_title ADD COLUMN IF NOT EXISTS issue boolean NOT NULL DEFAULT false;',
-                    reverse_sql='ALTER TABLE census_title DROP COLUMN IF EXISTS issue;',
+                    sql="ALTER TABLE census_title ADD COLUMN IF NOT EXISTS issue boolean NOT NULL DEFAULT false;",
+                    reverse_sql="ALTER TABLE census_title DROP COLUMN IF EXISTS issue;",
                 ),
-
                 # --- census_basecopy ---
                 # Rename Lee to lee if it exists (production), otherwise it's already lowercase
                 migrations.RunSQL(
@@ -172,33 +261,33 @@ class Migration(migrations.Migration):
                 ),
                 # Add columns that exist in production but never in a migration
                 migrations.RunSQL(
-                    sql='ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS digital_facsimile_url varchar(500) NULL;',
-                    reverse_sql='ALTER TABLE census_basecopy DROP COLUMN IF EXISTS digital_facsimile_url;',
+                    sql="ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS digital_facsimile_url varchar(500) NULL;",
+                    reverse_sql="ALTER TABLE census_basecopy DROP COLUMN IF EXISTS digital_facsimile_url;",
                 ),
                 migrations.RunSQL(
-                    sql='ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS bartlett_ms_annotations text NULL;',
-                    reverse_sql='ALTER TABLE census_basecopy DROP COLUMN IF EXISTS bartlett_ms_annotations;',
+                    sql="ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS bartlett_ms_annotations text NULL;",
+                    reverse_sql="ALTER TABLE census_basecopy DROP COLUMN IF EXISTS bartlett_ms_annotations;",
                 ),
                 migrations.RunSQL(
-                    sql='ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS fragment boolean NOT NULL DEFAULT false;',
-                    reverse_sql='ALTER TABLE census_basecopy DROP COLUMN IF EXISTS fragment;',
+                    sql="ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS fragment boolean NOT NULL DEFAULT false;",
+                    reverse_sql="ALTER TABLE census_basecopy DROP COLUMN IF EXISTS fragment;",
                 ),
                 migrations.RunSQL(
-                    sql='ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS in_early_sammelband boolean NOT NULL DEFAULT false;',
-                    reverse_sql='ALTER TABLE census_basecopy DROP COLUMN IF EXISTS in_early_sammelband;',
+                    sql="ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS in_early_sammelband boolean NOT NULL DEFAULT false;",
+                    reverse_sql="ALTER TABLE census_basecopy DROP COLUMN IF EXISTS in_early_sammelband;",
                 ),
                 migrations.RunSQL(
-                    sql='ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS rasmussen_west integer NULL DEFAULT 0;',
-                    reverse_sql='ALTER TABLE census_basecopy DROP COLUMN IF EXISTS rasmussen_west;',
+                    sql="ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS rasmussen_west integer NULL DEFAULT 0;",
+                    reverse_sql="ALTER TABLE census_basecopy DROP COLUMN IF EXISTS rasmussen_west;",
                 ),
                 migrations.RunSQL(
-                    sql='ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS rasmussen_west_notes text NULL;',
-                    reverse_sql='ALTER TABLE census_basecopy DROP COLUMN IF EXISTS rasmussen_west_notes;',
+                    sql="ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS rasmussen_west_notes text NULL;",
+                    reverse_sql="ALTER TABLE census_basecopy DROP COLUMN IF EXISTS rasmussen_west_notes;",
                 ),
                 # lee: renamed from "Lee" in production (handled above); add if still missing (fresh DB)
                 migrations.RunSQL(
-                    sql='ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS lee integer NULL DEFAULT 0;',
-                    reverse_sql='ALTER TABLE census_basecopy DROP COLUMN IF EXISTS lee;',
+                    sql="ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS lee integer NULL DEFAULT 0;",
+                    reverse_sql="ALTER TABLE census_basecopy DROP COLUMN IF EXISTS lee;",
                 ),
             ],
         ),

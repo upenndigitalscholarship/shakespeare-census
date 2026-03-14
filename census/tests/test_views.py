@@ -65,11 +65,15 @@ class TestSearch:
         assert census_data["copy"] in response.context["result_list"]
 
     def test_search_by_location_returns_200(self, client, census_data):
-        response = client.get("/search/", {"field": "location", "value": "Bodleian Library"})
+        response = client.get(
+            "/search/", {"field": "location", "value": "Bodleian Library"}
+        )
         assert response.status_code == 200
 
     def test_search_by_location_finds_copy(self, client, census_data):
-        response = client.get("/search/", {"field": "location", "value": "Bodleian Library"})
+        response = client.get(
+            "/search/", {"field": "location", "value": "Bodleian Library"}
+        )
         assert census_data["copy"] in response.context["result_list"]
 
     def test_search_empty_returns_200(self, client, census_data):

@@ -1,8 +1,8 @@
-# Frank Wiles (REVSYS) specific ignores 
+# Frank Wiles (REVSYS) specific ignores
 attic/
 .envrc
-.local_env 
-.env 
+.local_env
+.env
 
 ### Python template
 .django_tailwind_cli/

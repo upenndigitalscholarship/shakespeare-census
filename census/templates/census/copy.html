@@ -3,88 +3,88 @@
 {% load humanize %}
 {% block content %}
 
-<div>
-    <script type="text/javascript" src="{% static 'census/js/modal.js' %}"></script>
-    <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
-    <div id="copyModal" class="modal" role="dialog"></div>
-</div>
+    <div>
+        <script type="text/javascript" src="{% static 'census/js/modal.js' %}"></script>
+        <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+        <div id="copyModal" class="modal" role="dialog"></div>
+    </div>
 
-{% include "census/play-title-header.html" with selected_issue=selected_issue icon_path=icon_path title=title all_copies=all_copies %}
+    {% include "census/play-title-header.html" with selected_issue=selected_issue icon_path=icon_path title=title all_copies=all_copies %}
 
-<table class="play-detail-set">
-    {% if all_copies %}
-    <tr>
-        <th class="terse"> SC # </th>
-        <th class="detailed"> Location </th>
-        <th> Shelfmark </th>
-        <th class="w-12 px-3"></th>
-        <th class="w-12 px-3"></th>
-        <th class="w-12 px-3"></th>
-    </tr>
-    {% for copy in all_copies %}
-    <tr>
-        <td>
-            {% if copy.nsc and copy.nsc != '0' %}
-                <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
-                    {{ copy.nsc }}
-                </a>
-            {% else %}
-                &nbsp;
-            {% endif %}
-            {% if user.is_staff %}
-                <span class="note">[<a href="{% url 'admin:census_canonicalcopy_change' copy.id %}">Edit copy</a>]</span>
-            {% endif %}
-        </td>
-        <td>
-            <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
-                {{copy.location.name}}
-            </a>
-        </td>
-        <td>
-            {% if not copy.shelfmark or copy.shelfmark == "[Shelfmark not available]" or copy.shelfmark is None %}
-                &nbsp;
-            {% else %}
-                <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
-                    {{ copy.shelfmark }}
-                </a>
-            {% endif %}
-        </td>
-        <td class="w-12 px-3">
-            {% if copy.from_estc and not copy.location_verified %}
-                <span title="The existence of this copy has not been verified; location derived from ESTC." class="unverified-symbol">&#x20E0;</span>
-            {% elif not copy.location_verified %}
-                <span title="The existence of this copy has not been verified; location entered by an administrator." class="unverified-symbol">&#x20E0;</span>
-            {% else %}
-                <span title="This existence of this copy at the location has been verified." class="verified-symbol">&#x2713;</span>
-            {% endif %}
-        </td>
-        <td class="w-12 px-3">
-            {% if copy.fragment %}
-                <span title="This copy is a fragment.">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="16" height="16" fill="currentColor" aria-hidden="true">
-                        <path d="M475.115 163.781L336 252.309v-68.28c0-18.916-20.931-30.399-36.885-20.248L160 252.309V56c0-13.255-10.745-24-24-24H24C10.745 32 0 42.745 0 56v400c0 13.255 10.745 24 24 24h528c13.255 0 24-10.745 24-24V184.029c0-18.917-20.931-30.399-36.885-20.248z"/>
-                    </svg>
-                </span>
-            {% else %}
-                &nbsp;
-            {% endif %}
-        </td>
-        <td class="w-12 px-3">
-            {% if copy.digital_facsimile_url %}
-                <a href="{{ copy.digital_facsimile_url }}" target="_blank" title="View digital facsimile">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16" height="16" fill="currentColor" aria-hidden="true">
-                        <path d="M32 64 L480 64 C497.7 64 512 78.3 512 96 L512 416 C512 433.7 497.7 448 480 448 L32 448 C14.3 448 0 433.7 0 416 L0 96 C0 78.3 14.3 64 32 64 Z M256 128 A128 128 0 1 0 256 384 A128 128 0 1 0 256 128 Z M256 176 A80 80 0 1 1 256 336 A80 80 0 1 1 256 176 Z"/>
-                    </svg>
-                </a>
-            {% else %}
-                &nbsp;
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-    {% else %}
-    <tr><td colspan="6"><p class="text-center">No editions are available.</p></td></tr>
-    {% endif %}
-</table>
+    <table class="play-detail-set">
+        {% if all_copies %}
+            <tr>
+                <th class="terse"> SC # </th>
+                <th class="detailed"> Location </th>
+                <th> Shelfmark </th>
+                <th class="w-12 px-3"></th>
+                <th class="w-12 px-3"></th>
+                <th class="w-12 px-3"></th>
+            </tr>
+            {% for copy in all_copies %}
+                <tr>
+                    <td>
+                        {% if copy.nsc and copy.nsc != '0' %}
+                            <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                                {{ copy.nsc }}
+                            </a>
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                        {% if user.is_staff %}
+                            <span class="note">[<a href="{% url 'admin:census_canonicalcopy_change' copy.id %}">Edit copy</a>]</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                            {{copy.location.name}}
+                        </a>
+                    </td>
+                    <td>
+                        {% if not copy.shelfmark or copy.shelfmark == "[Shelfmark not available]" or copy.shelfmark is None %}
+                            &nbsp;
+                        {% else %}
+                            <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                                {{ copy.shelfmark }}
+                            </a>
+                        {% endif %}
+                    </td>
+                    <td class="w-12 px-3">
+                        {% if copy.from_estc and not copy.location_verified %}
+                            <span title="The existence of this copy has not been verified; location derived from ESTC." class="unverified-symbol">&#x20E0;</span>
+                        {% elif not copy.location_verified %}
+                            <span title="The existence of this copy has not been verified; location entered by an administrator." class="unverified-symbol">&#x20E0;</span>
+                        {% else %}
+                            <span title="This existence of this copy at the location has been verified." class="verified-symbol">&#x2713;</span>
+                        {% endif %}
+                    </td>
+                    <td class="w-12 px-3">
+                        {% if copy.fragment %}
+                            <span title="This copy is a fragment.">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="16" height="16" fill="currentColor" aria-hidden="true">
+                                    <path d="M475.115 163.781L336 252.309v-68.28c0-18.916-20.931-30.399-36.885-20.248L160 252.309V56c0-13.255-10.745-24-24-24H24C10.745 32 0 42.745 0 56v400c0 13.255 10.745 24 24 24h528c13.255 0 24-10.745 24-24V184.029c0-18.917-20.931-30.399-36.885-20.248z"/>
+                                </svg>
+                            </span>
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    </td>
+                    <td class="w-12 px-3">
+                        {% if copy.digital_facsimile_url %}
+                            <a href="{{ copy.digital_facsimile_url }}" target="_blank" title="View digital facsimile">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16" height="16" fill="currentColor" aria-hidden="true">
+                                    <path d="M32 64 L480 64 C497.7 64 512 78.3 512 96 L512 416 C512 433.7 497.7 448 480 448 L32 448 C14.3 448 0 433.7 0 416 L0 96 C0 78.3 14.3 64 32 64 Z M256 128 A128 128 0 1 0 256 384 A128 128 0 1 0 256 128 Z M256 176 A80 80 0 1 1 256 336 A80 80 0 1 1 256 176 Z"/>
+                                </svg>
+                            </a>
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr><td colspan="6"><p class="text-center">No editions are available.</p></td></tr>
+        {% endif %}
+    </table>
 
 {% endblock content %}

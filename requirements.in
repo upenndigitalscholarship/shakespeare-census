@@ -8,11 +8,11 @@ psycopg[binary]
 django-db-geventpool
 django-model-utils
 gevent
-gunicorn 
+gunicorn
 django-tailwind-cli==4.5.1
 
-ipython 
-vinnie 
+ipython
+vinnie
 django-structlog
 django-tracer
 python-json-logger
@@ -23,9 +23,9 @@ structlog
 # ------------------------------------------------------------------------------
 pytest
 pytest-sugar
-pytest-django 
-pytest-cov 
-django-test-plus 
-
-model-bakery 
-factory-boy==2.11.1  
+pytest-django
+pytest-cov
+django-test-plus
+prek
+model-bakery
+factory-boy==2.11.1

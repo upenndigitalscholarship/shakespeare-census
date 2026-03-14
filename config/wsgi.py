@@ -7,6 +7,7 @@ named ``application``. Django's ``runserver`` and ``runfcgi`` commands discover
 this application via the ``WSGI_APPLICATION`` setting.
 
 """
+
 import os
 
 from django.core.wsgi import get_wsgi_application

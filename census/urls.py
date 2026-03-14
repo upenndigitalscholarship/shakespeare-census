@@ -16,11 +16,6 @@ urlpatterns = [
     path("draftcopydata/<int:copy_id>/", views.draft_copy_data, name="draft_copy_data"),
     path("add_copy/<int:id>/", views.add_copy, name="add_copy"),
     path("contact/", views.contact, name="contact"),
-    path(
-        "contact/contact_success/",
-        views.display_contact_success,
-        name="contact_success",
-    ),
     # Admin start page:
     path("admin_start", views.admin_start, name="admin_start"),
     # Location verification page:
@@ -60,8 +55,20 @@ urlpatterns = [
     path("create_draftcopy/", views.create_draftcopy, name="create_draftcopy"),
     path("location_incorrect/", views.location_incorrect, name="location_incorrect"),
     # Autofill endpoints for search bar
-    path("autofill/location/<str:query>", views.autofill_location, name="autofill_location"),
-    path("autofill/provenance/<str:query>", views.autofill_provenance, name="autofill_provenance"),
+    path(
+        "autofill/location/<str:query>",
+        views.autofill_location,
+        name="autofill_location",
+    ),
+    path(
+        "autofill/provenance/<str:query>",
+        views.autofill_provenance,
+        name="autofill_provenance",
+    ),
     path("autofill/collection/", views.autofill_collection, name="autofill_collection"),
-    path("autofill/collection/<str:query>", views.autofill_collection, name="autofill_collection_query"),
+    path(
+        "autofill/collection/<str:query>",
+        views.autofill_collection,
+        name="autofill_collection_query",
+    ),
 ]

@@ -1,14 +1,10 @@
 from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
-from django.shortcuts import render, get_object_or_404
 from django.template import loader
 from . import models
 from . import forms
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout, authenticate, login
 from django.db.models import Q
 from django.urls import reverse
-from django.contrib import messages
-from django.contrib.sites.shortcuts import get_current_site
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from datetime import datetime
@@ -35,15 +31,27 @@ def get_draft_if_exists(selected_copy):
 
 
 def search_sort_date(copy):
-    return (copy_date_sort_key(copy), title_sort_key(copy.issue.edition.title), copy_location_sort_key(copy))
+    return (
+        copy_date_sort_key(copy),
+        title_sort_key(copy.issue.edition.title),
+        copy_location_sort_key(copy),
+    )
 
 
 def search_sort_title(copy):
-    return (title_sort_key(copy.issue.edition.title), copy_date_sort_key(copy), copy_location_sort_key(copy))
+    return (
+        title_sort_key(copy.issue.edition.title),
+        copy_date_sort_key(copy),
+        copy_location_sort_key(copy),
+    )
 
 
 def search_sort_location(copy):
-    return (copy_location_sort_key(copy), copy_date_sort_key(copy), title_sort_key(copy.issue.edition.title))
+    return (
+        copy_location_sort_key(copy),
+        copy_date_sort_key(copy),
+        title_sort_key(copy.issue.edition.title),
+    )
 
 
 def search_sort_stc(copy):
@@ -112,7 +120,7 @@ def copy_sort_key(c):
 
 def convert_year_range(year):
     if "-" in year:
-        start, end = [n.strip() for n in year.split("-", 1)]
+        start, end = (n.strip() for n in year.split("-", 1))
         if len(start) == 4 and start.isdigit() and len(end) == 4 and end.isdigit():
             return int(start), int(end)
     elif len(year) == 4 and year.isdigit():
@@ -124,7 +132,7 @@ def get_icon_path(id=None):
     if id is None:
         return "census/images/title_icons/generic-title-icon.png"
     else:
-        return "census/images/title_icons/{}.png".format(id)
+        return f"census/images/title_icons/{id}.png"
 
 
 ## VIEW FUNCTIONS ##
@@ -139,9 +147,11 @@ def get_collection(copy_list, coll_name):
         display = "Copies with a known woman owner"
     elif coll_name == "earlywomanowner":
         results = copy_list.filter(
-            Q(provenanceownership__owner__gender="F") &
-            (Q(provenanceownership__owner__start_century="17") |
-             Q(provenanceownership__owner__start_century="18"))
+            Q(provenanceownership__owner__gender="F")
+            & (
+                Q(provenanceownership__owner__start_century="17")
+                | Q(provenanceownership__owner__start_century="18")
+            )
         )
         display = "Copies with a known woman owner before 1800"
     elif coll_name == "marginalia":
@@ -157,7 +167,10 @@ def get_collection(copy_list, coll_name):
 
 def autofill_collection(request, query=None):
     collection = [
-        {"label": "With known early provenance (before 1700)", "value": "earlyprovenance"},
+        {
+            "label": "With known early provenance (before 1700)",
+            "value": "earlyprovenance",
+        },
         {"label": "With a known woman owner", "value": "womanowner"},
         {"label": "With a known woman owner before 1800", "value": "earlywomanowner"},
         {"label": "Includes marginalia", "value": "marginalia"},
@@ -223,7 +236,9 @@ def search(request, field=None, value=None, order=None):
         year_range = convert_year_range(value)
         if year_range:
             start, end = year_range
-            result_list = copy_list.filter(issue__start_date__lte=end, issue__end_date__gte=start)
+            result_list = copy_list.filter(
+                issue__start_date__lte=end, issue__end_date__gte=start
+            )
         else:
             result_list = copy_list.filter(issue__year__icontains=value)
     elif field == "location" and value:
@@ -234,7 +249,9 @@ def search(request, field=None, value=None, order=None):
         result_list = copy_list.filter(Q(bartlett1916=value) | Q(bartlett1939=value))
     elif field == "provenance_name" and value:
         display_field = "Provenance Name"
-        result_list = copy_list.filter(provenanceownership__owner__name__icontains=value)
+        result_list = copy_list.filter(
+            provenanceownership__owner__name__icontains=value
+        )
     elif field == "unverified":
         display_field = "Unverified"
         display_value = "All"
@@ -307,7 +324,7 @@ def about(request, viewname="about"):
     content = [
         (
             s.content.replace("{copy_count}", copy_count).replace(
-                "{current_date}", "{d:%d %B %Y}".format(d=datetime.now())
+                "{current_date}", f"{datetime.now():%d %B %Y}"
             )
         )
         for s in models.StaticPageText.objects.filter(viewname=viewname)
@@ -386,19 +403,6 @@ def copy_data(request, copy_id):
     selected_copy = models.CanonicalCopy.objects.get(pk=copy_id)
     context = {"copy": selected_copy}
 
-    return HttpResponse(template.render(context, request))
-
-
-# expected to be called when a new copy is submitted; displaying the copy info
-def copy_info(request, copy_id):
-    template = loader.get_template("census/copy_info.html")
-    selected_copy = get_object_or_404(ChildCopy, pk=copy_id)
-    selected_issue = selected_copy.issue
-    selected_edition = selected_issue.edition
-    context = {
-        "selected_edition": selected_edition,
-        "selected_copy": selected_copy,
-    }
     return HttpResponse(template.render(context, request))
 
 
@@ -659,7 +663,7 @@ def admin_submission_verify(request):
 def admin_verify_single_edit_accept(request):
     try:
         copy_id = request.GET.get("copy_id")
-    except IOError:
+    except OSError:
         print("something wrong with id, may be it does not exist at all?")
     selected_draft_copy = models.DraftCopy.objects.get(pk=copy_id)
     if selected_draft_copy.parent and isinstance(
@@ -674,12 +678,6 @@ def admin_verify_single_edit_accept(request):
 
 @login_required
 def admin_verify_single_edit_reject(request):
-    try:
-        copy_id = request.GET.get("copy_id")
-
-    except IOError:
-        print("something wrong with id, may be it does not exist at all?")
-
     return HttpResponse("success")
 
 
@@ -704,7 +702,7 @@ def admin_verify_location_verified(request):
 def admin_verify_copy(request):
     try:
         copy_id = request.GET.get("copy_id")
-    except IOError:
+    except OSError:
         print("something wrong with id, may be it does not exist at all?")
     selected_draft_copy = models.DraftCopy.objects.get(pk=copy_id)
     canonical_copy = selected_draft_copy.parent
@@ -730,7 +728,7 @@ def admin_verify_copy(request):
 def create_draftcopy(request):
     try:
         copy_id = request.GET.get("copy_id")
-    except IOError:
+    except OSError:
         print("something wrong with id, may be it does not exist at all?")
 
     selected_copy = models.CanonicalCopy.objects.get(pk=copy_id)
@@ -745,7 +743,7 @@ def create_draftcopy(request):
 def location_incorrect(request):
     try:
         copy_id = request.GET.get("copy_id")
-    except IOError:
+    except OSError:
         print("something wrong with id, may be it does not exist at all?")
 
     selected_copy = models.CanonicalCopy.objects.get(pk=copy_id)
@@ -758,27 +756,8 @@ def location_incorrect(request):
 
 def contact(request):
     template = loader.get_template("census/contact-form.html")
-
-    if request.method == "POST":
-        form = forms.ContactUs(request.POST)
-        if form.is_valid() and form.data["guardian"] == "":
-            form.save()
-            return HttpResponseRedirect(reverse("contact_success"))
-        elif form.is_valid() and form.data["guardian"] != "":
-            return HttpResponseRedirect(reverse("contact_success"))
-        else:
-            messages.error(request, "This form is invalid")
-    else:
-        form = forms.ContactUs()
-
-    context = {"form": form}
-    return HttpResponse(template.render(context, request))
-
-
-def display_contact_success(request):
-    template = loader.get_template("census/contact-form-success.html")
-    current_user = request.user
-    context = {
-        "user": current_user,
-    }
+    content = [
+        s.content for s in models.StaticPageText.objects.filter(viewname="contact")
+    ]
+    context = {"content": content}
     return HttpResponse(template.render(context, request))

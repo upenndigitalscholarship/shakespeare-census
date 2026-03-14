@@ -27,7 +27,9 @@ def census_data(db):
     location = baker.make("census.Location", name="Bodleian Library")
 
     title = baker.make("census.Title", title="Hamlet", apocryphal=False, hidden=False)
-    edition = baker.make("census.Edition", title=title, edition_number="1", edition_format="Folio")
+    edition = baker.make(
+        "census.Edition", title=title, edition_number="1", edition_format="Folio"
+    )
     issue = baker.make(
         "census.Issue",
         edition=edition,

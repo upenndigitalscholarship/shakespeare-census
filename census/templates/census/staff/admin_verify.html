@@ -2,62 +2,62 @@
 {% load static %}
 {% block content %}
 
-{% if not user.is_staff %}
-<p class="guide-text">Please sign in as administrator to view this page or do anything</p>
-{% else %}
-<script type="text/javascript" src="{% static 'census/js/modal.js' %}"></script>
-<script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
-<div id="copyModal" class="modal" role="dialog"></div>
+    {% if not user.is_staff %}
+        <p class="guide-text">Please sign in as administrator to view this page or do anything</p>
+    {% else %}
+        <script type="text/javascript" src="{% static 'census/js/modal.js' %}"></script>
+        <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+        <div id="copyModal" class="modal" role="dialog"></div>
 
-<div class="max-w-3xl mx-auto">
-    <hr class="my-4 w-1/2 mx-auto">
-    <p class="guide-text">
-        Here is a list of the copies librarians have verified.<br />
-        Please check the details and approve if correct.
-    </p>
-    <hr class="my-4 w-1/2 mx-auto">
+        <div class="max-w-3xl mx-auto">
+            <hr class="my-4 w-1/2 mx-auto">
+            <p class="guide-text">
+                Here is a list of the copies librarians have verified.<br />
+                Please check the details and approve if correct.
+            </p>
+            <hr class="my-4 w-1/2 mx-auto">
 
-    <table class="librarian-select-ui mx-auto">
-        <tbody>
-            <tr>
-                <th class="librarian-select-ui-wide">Copies awaiting approval</th>
-                <th class="librarian-select-ui"></th>
-                <th class="librarian-select-ui">Held by library?</th>
-                <th class="librarian-select-ui"></th>
-            </tr>
-            {% if copies %}
-                {% for copy in copies %}
+            <table class="librarian-select-ui mx-auto">
+                <tbody>
                     <tr>
-                        <td>{{ copy.issue.edition.title }}
-                            ({{ copy.issue.year }}) --
-                            STC/Wing: {{ copy.issue.stc_wing }}
-                        </td>
-                        <td>
-                            <span class="copy_data button-inline-small" id="data{{copy.parent.id}}" data-form="{% url 'copy_data' copy.parent.id %}" title="Details">
-                                View details
-                            </span>
-                        </td>
-                        <td>
-                            {{ copy.location_verified|yesno:"Yes,No" }}
-                        </td>
-                        <td>
-                            <button id="validate-{{ copy.id }}" class="button-inline" onclick="adminValidate({{ copy.id }});">Verify</button>
-                        </td>
+                        <th class="librarian-select-ui-wide">Copies awaiting approval</th>
+                        <th class="librarian-select-ui"></th>
+                        <th class="librarian-select-ui">Held by library?</th>
+                        <th class="librarian-select-ui"></th>
                     </tr>
-                {% endfor %}
-            {% endif %}
-        </tbody>
-    </table>
-</div>
+                    {% if copies %}
+                        {% for copy in copies %}
+                            <tr>
+                                <td>{{ copy.issue.edition.title }}
+                                    ({{ copy.issue.year }}) --
+                                    STC/Wing: {{ copy.issue.stc_wing }}
+                                </td>
+                                <td>
+                                    <span class="copy_data button-inline-small" id="data{{copy.parent.id}}" data-form="{% url 'copy_data' copy.parent.id %}" title="Details">
+                                        View details
+                                    </span>
+                                </td>
+                                <td>
+                                    {{ copy.location_verified|yesno:"Yes,No" }}
+                                </td>
+                                <td>
+                                    <button id="validate-{{ copy.id }}" class="button-inline" onclick="adminValidate({{ copy.id }});">Verify</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
 
-<script>
-function adminValidate(copy_id) {
-    fetch("admin_verify_copy/?copy_id=" + copy_id)
-        .then(function(response) { return response.json(); })
-        .then(function() {
-            document.getElementById('validate-' + copy_id).classList.add('button-inline-selected');
-        });
-}
-</script>
-{% endif %}
+        <script>
+            function adminValidate(copy_id) {
+                fetch("admin_verify_copy/?copy_id=" + copy_id)
+                    .then(function(response) { return response.json(); })
+                    .then(function() {
+                        document.getElementById('validate-' + copy_id).classList.add('button-inline-selected');
+                    });
+            }
+        </script>
+    {% endif %}
 {% endblock content %}

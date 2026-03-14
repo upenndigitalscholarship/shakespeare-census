@@ -21,7 +21,6 @@ class LocationAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.StaticPageText)
-admin.site.register(models.ContactForm)
 
 # Higher-level FRBR categories:
 

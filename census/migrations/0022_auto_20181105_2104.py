@@ -6,45 +6,57 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('census', '0021_auto_20181026_1621'),
+        ("census", "0021_auto_20181026_1621"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='basecopy',
-            name='Binder',
+            model_name="basecopy",
+            name="Binder",
             field=models.CharField(blank=True, default=None, max_length=500, null=True),
         ),
         migrations.AlterField(
-            model_name='basecopy',
-            name='Binding',
+            model_name="basecopy",
+            name="Binding",
             field=models.CharField(blank=True, default=None, max_length=500, null=True),
         ),
         migrations.AlterField(
-            model_name='basecopy',
-            name='Bookplate',
+            model_name="basecopy",
+            name="Bookplate",
             field=models.CharField(blank=True, default=None, max_length=500, null=True),
         ),
         migrations.AlterField(
-            model_name='basecopy',
-            name='Bookplate_Location',
+            model_name="basecopy",
+            name="Bookplate_Location",
             field=models.CharField(blank=True, default=None, max_length=500, null=True),
         ),
         migrations.AlterField(
-            model_name='basecopy',
-            name='Condition',
+            model_name="basecopy",
+            name="Condition",
             field=models.CharField(blank=True, default=None, max_length=500, null=True),
         ),
         migrations.AlterField(
-            model_name='basecopy',
-            name='created_by',
-            field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='user_submitted_copies', to=settings.AUTH_USER_MODEL),
+            model_name="basecopy",
+            name="created_by",
+            field=models.ForeignKey(
+                blank=True,
+                default=None,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="user_submitted_copies",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='userdetail',
-            name='group',
-            field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, to='auth.Group'),
+            model_name="userdetail",
+            name="group",
+            field=models.ForeignKey(
+                blank=True,
+                default=None,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="auth.Group",
+            ),
         ),
     ]

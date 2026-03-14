@@ -11,8 +11,8 @@
     <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
 
     {% block css %}
-    {% tailwind_css %}
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500" rel="stylesheet">
+      {% tailwind_css %}
+      <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500" rel="stylesheet">
     {% endblock %}
 
   </head>
@@ -85,20 +85,20 @@
     {% block modal %}{% endblock modal %}
 
     {% block javascript %}
-    <script>
+      <script>
       // Mobile menu toggle
-      document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-        const menu = document.getElementById('mobile-menu');
-        const menuIcon = this.querySelector('.menu-icon');
-        const closeIcon = this.querySelector('.close-icon');
-        const isExpanded = this.getAttribute('aria-expanded') === 'true';
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+          const menu = document.getElementById('mobile-menu');
+          const menuIcon = this.querySelector('.menu-icon');
+          const closeIcon = this.querySelector('.close-icon');
+          const isExpanded = this.getAttribute('aria-expanded') === 'true';
 
-        menu.classList.toggle('hidden');
-        this.setAttribute('aria-expanded', !isExpanded);
-        menuIcon.classList.toggle('hidden');
-        closeIcon.classList.toggle('hidden');
-      });
-    </script>
+          menu.classList.toggle('hidden');
+          this.setAttribute('aria-expanded', !isExpanded);
+          menuIcon.classList.toggle('hidden');
+          closeIcon.classList.toggle('hidden');
+        });
+      </script>
     {% endblock javascript %}
   </body>
 </html>

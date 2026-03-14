@@ -1,9 +1,9 @@
 {% load static %}
 
 {% if user.is_staff %}
-<div class="text-right text-sm py-1 pr-2">
-    <a class="button" href="{% url 'admin_start' %}">Site Administration</a>
-</div>
+    <div class="text-right text-sm py-1 pr-2">
+        <a class="button" href="{% url 'admin_start' %}">Site Administration</a>
+    </div>
 {% endif %}
 
 <div class="text-center mt-10 mb-5">
@@ -67,83 +67,83 @@
 </style>
 
 <script>
-(function () {
-    var autofillMap = {
-        location: '/autofill/location/',
-        provenance_name: '/autofill/provenance/',
-        collection: '/autofill/collection/'
-    };
+    (function () {
+        var autofillMap = {
+            location: '/autofill/location/',
+            provenance_name: '/autofill/provenance/',
+            collection: '/autofill/collection/'
+        };
 
-    var searchButton = document.getElementById('site-search-button');
-    var form = document.getElementById('search-bar-form');
-    var fieldSelect = document.getElementById('search-bar-form-field');
-    var input = document.getElementById('search-bar-form-text');
-    var dropdown = document.getElementById('search-autocomplete-list');
-    var debounceTimer = null;
+        var searchButton = document.getElementById('site-search-button');
+        var form = document.getElementById('search-bar-form');
+        var fieldSelect = document.getElementById('search-bar-form-field');
+        var input = document.getElementById('search-bar-form-text');
+        var dropdown = document.getElementById('search-autocomplete-list');
+        var debounceTimer = null;
 
-    searchButton.addEventListener('click', function () {
-        form.classList.toggle('hidden');
-    });
-
-    function getSelectedField() {
-        return fieldSelect.options[fieldSelect.selectedIndex].value;
-    }
-
-    function showSuggestions(matches) {
-        dropdown.innerHTML = '';
-        if (!matches || matches.length === 0) {
-            dropdown.style.display = 'none';
-            return;
-        }
-        matches.forEach(function (match) {
-            // Collection returns {label, value} objects; other endpoints return plain strings
-            var label = match.label !== undefined ? match.label : match;
-            var value = match.value !== undefined ? match.value : match;
-            var li = document.createElement('li');
-            li.textContent = label;
-            li.addEventListener('mousedown', function (e) {
-                // preventDefault keeps the input from losing focus before we can read the click
-                e.preventDefault();
-                input.value = value;
-                dropdown.style.display = 'none';
-                form.submit();
-            });
-            dropdown.appendChild(li);
+        searchButton.addEventListener('click', function () {
+            form.classList.toggle('hidden');
         });
-        dropdown.style.display = 'block';
-    }
 
-    function fetchSuggestions(field, query) {
-        fetch(autofillMap[field] + encodeURIComponent(query))
-            .then(function (r) { return r.json(); })
-            .then(function (data) { showSuggestions(data.matches); });
-    }
-
-    input.addEventListener('input', function () {
-        var field = getSelectedField();
-        if (!autofillMap.hasOwnProperty(field) || input.value.length < 3) {
-            dropdown.style.display = 'none';
-            return;
+        function getSelectedField() {
+            return fieldSelect.options[fieldSelect.selectedIndex].value;
         }
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(function () {
-            fetchSuggestions(field, input.value);
-        }, 200);
-    });
 
-    form.addEventListener('submit', function () {
-        setTimeout(function () { input.value = ''; }, 0);
-    });
+        function showSuggestions(matches) {
+            dropdown.innerHTML = '';
+            if (!matches || matches.length === 0) {
+                dropdown.style.display = 'none';
+                return;
+            }
+            matches.forEach(function (match) {
+            // Collection returns {label, value} objects; other endpoints return plain strings
+                var label = match.label !== undefined ? match.label : match;
+                var value = match.value !== undefined ? match.value : match;
+                var li = document.createElement('li');
+                li.textContent = label;
+                li.addEventListener('mousedown', function (e) {
+                // preventDefault keeps the input from losing focus before we can read the click
+                    e.preventDefault();
+                    input.value = value;
+                    dropdown.style.display = 'none';
+                    form.submit();
+                });
+                dropdown.appendChild(li);
+            });
+            dropdown.style.display = 'block';
+        }
 
-    input.addEventListener('blur', function () {
+        function fetchSuggestions(field, query) {
+            fetch(autofillMap[field] + encodeURIComponent(query))
+                .then(function (r) { return r.json(); })
+                .then(function (data) { showSuggestions(data.matches); });
+        }
+
+        input.addEventListener('input', function () {
+            var field = getSelectedField();
+            if (!autofillMap.hasOwnProperty(field) || input.value.length < 3) {
+                dropdown.style.display = 'none';
+                return;
+            }
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(function () {
+                fetchSuggestions(field, input.value);
+            }, 200);
+        });
+
+        form.addEventListener('submit', function () {
+            setTimeout(function () { input.value = ''; }, 0);
+        });
+
+        input.addEventListener('blur', function () {
         // Small delay so mousedown on a suggestion fires first
-        setTimeout(function () { dropdown.style.display = 'none'; }, 150);
-    });
+            setTimeout(function () { dropdown.style.display = 'none'; }, 150);
+        });
 
-    fieldSelect.addEventListener('change', function () {
-        if (getSelectedField() === 'collection') {
-            fetchSuggestions('collection', '   ');
-        }
-    });
-}());
+        fieldSelect.addEventListener('change', function () {
+            if (getSelectedField() === 'collection') {
+                fetchSuggestions('collection', '   ');
+            }
+        });
+    }());
 </script>

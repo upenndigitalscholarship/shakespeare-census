@@ -1,4 +1,14 @@
+# Frank Wiles (REVSYS) specific ignores
+attic/
+.envrc
+.local_env
+.env
+
 ### Python template
+.django_tailwind_cli/
+.playwright_cache/
+.playwright-mcp/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -61,9 +71,6 @@ target/
 
 # pyenv
 .python-version
-
-# celery beat schedule file
-celerybeat-schedule
 
 # Environments
 .venv
@@ -269,7 +276,11 @@ tags
 ### Project template
 
 shakespeare_census/media/
+media/
 
 .pytest_cache/
 .env
 .envs/*
+
+# Database backups
+*.sql

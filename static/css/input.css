@@ -1,0 +1,381 @@
+@import "tailwindcss";
+
+@theme {
+  /* Custom colors from Shakespeare Census design */
+  --color-primary: rgba(152, 75, 67, 1);
+  --color-primary-light: rgba(152, 75, 67, 0.3);
+  --color-primary-lighter: rgba(152, 75, 67, 0.1);
+  --color-dark: #233237;
+  --color-verified: rgba(67, 75, 182, 1);
+  --color-unverified: rgba(182, 75, 67, 1);
+
+  /* Fonts */
+  --font-sans: "Open Sans", AppleGothic, sans-serif;
+}
+
+@layer base {
+  html {
+    margin-left: calc(100vw - 100%);
+  }
+
+  body {
+    font-family: "Open Sans", AppleGothic, sans-serif;
+    font-weight: 300;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  a:link,
+  a:visited,
+  a:hover {
+    color: #233237;
+  }
+
+  table {
+    margin: auto;
+    border-collapse: collapse;
+    font-weight: 300;
+  }
+
+  th {
+    font-weight: 300;
+  }
+
+  ul {
+    list-style: none;
+  }
+
+  li {
+    margin: 3px;
+  }
+
+  select {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: rgba(152, 75, 67, 0.2);
+    padding: 3px 5px;
+    margin: 3px;
+    font-weight: 300;
+    font-size: 80%;
+    font-family: "Open Sans", AppleGothic, sans-serif;
+  }
+
+  input {
+    cursor: pointer;
+    margin: 2px;
+    border: 1px solid rgba(152, 75, 67, 0.4);
+    border-radius: 4px;
+    border-width: 1px;
+    padding: 2px 6px 3px 6px;
+    font-family: inherit;
+    background-color: rgba(152, 75, 67, 0.1);
+    height: 25px;
+    font-size: 80%;
+  }
+
+  input[type="submit"] {
+    background-color: rgba(152, 75, 67, 0.2);
+    font-weight: 300;
+    user-select: none;
+  }
+}
+
+@layer components {
+  /* Button styles */
+  .button {
+    cursor: pointer;
+    display: inline-block;
+    margin: 2px;
+    border: 1px solid rgba(152, 75, 67, 0.4);
+    border-radius: 4px;
+    padding: 2px 6px 3px 6px;
+    background-color: rgba(152, 75, 67, 0.2);
+    font-family: inherit;
+    font-weight: 300;
+    font-size: 80%;
+    height: 25px;
+    line-height: 18px;
+    text-decoration: none;
+    user-select: none;
+    color: #233237;
+  }
+
+  .button-inline {
+    cursor: pointer;
+    display: inline-block;
+    margin: 2px 10px 3px 10px;
+    border: 1px solid rgba(152, 75, 67, 0.4);
+    border-radius: 4px;
+    padding: 1px 6px 2px 6px;
+    background-color: rgba(152, 75, 67, 0.2);
+    font-weight: 300;
+    font-size: 65%;
+    height: 18px;
+    line-height: 14px;
+    text-decoration: none;
+    user-select: none;
+    color: #233237;
+  }
+
+  .button-inline-small {
+    cursor: pointer;
+    display: inline-block;
+    margin: 2px 10px 3px 10px;
+    border: 1px solid rgba(152, 75, 67, 0.4);
+    border-radius: 4px;
+    padding: 1px 3px 1px 3px;
+    background-color: rgba(152, 75, 67, 0.2);
+    font-weight: 300;
+    font-size: 50%;
+    height: 10px;
+    line-height: 8px;
+    text-decoration: none;
+    user-select: none;
+    color: #233237;
+  }
+
+  .button-inline-selected {
+    background-color: rgba(152, 75, 67, 0.6);
+  }
+
+  /* Data table for copy listings */
+  .play-detail-set {
+    text-align: center;
+    margin: 0 12% 10% 12%;
+  }
+
+  .play-detail-set tr:nth-child(odd) {
+    background-color: rgba(35, 50, 55, 0.1);
+  }
+
+  .play-detail-set tr:nth-child(1) {
+    background-color: rgba(152, 75, 67, 0.5);
+  }
+
+  .play-detail-set tr {
+    border: none;
+  }
+
+  .play-detail-set td,
+  .play-detail-set th {
+    width: 170px;
+    padding: 10px 6px;
+    font-weight: 300;
+  }
+
+  .play-detail-set th.detailed,
+  .play-detail-set td.detailed {
+    width: 350px;
+  }
+
+  .play-detail-set th.terse,
+  .play-detail-set td.terse {
+    width: 20px;
+  }
+
+  .play-detail-set th.even {
+    width: 215px;
+  }
+
+  /* Librarian/admin select table */
+  .librarian-select-ui {
+    border-collapse: separate;
+    border-spacing: 0;
+    font-weight: 300;
+  }
+
+  .librarian-select-ui th,
+  .librarian-select-ui td {
+    min-width: 120px;
+    padding: 8px 12px;
+    font-weight: 300;
+  }
+
+  th.librarian-select-ui-wide,
+  td.librarian-select-ui-wide {
+    min-width: 450px;
+  }
+
+  th.librarian-select-ui {
+    height: 50px;
+  }
+
+  /* Admin UI table (start pages) */
+  .admin-ui {
+    border-collapse: separate;
+    border-spacing: 0 40px;
+  }
+
+  .admin-ui td {
+    min-width: 400px;
+  }
+
+  /* Admin submit form table */
+  .admin-submit {
+    border-collapse: separate;
+    border-spacing: 10px;
+  }
+
+  /* Text helpers */
+  .guide-text {
+    text-align: center;
+  }
+
+  td p.static-text {
+    text-align: center;
+  }
+
+  p.guide-text {
+    text-align: center;
+  }
+
+  p.static-text {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    text-align: left;
+  }
+
+  .static-text a:link,
+  .static-text a:visited,
+  .static-text a:hover,
+  .guide-text a:link,
+  .guide-text a:visited,
+  .guide-text a:hover {
+    color: rgba(152, 75, 67, 1);
+    font-weight: bold;
+  }
+
+  span.citation {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 30px;
+    text-indent: -24px;
+    display: block;
+  }
+
+  /* Symbols */
+  span.unverified-symbol {
+    font-weight: bold;
+    color: rgba(182, 75, 67, 1);
+    font-size: 130%;
+  }
+
+  span.unverified-symbol-small {
+    font-weight: bold;
+    color: rgba(182, 75, 67, 1);
+  }
+
+  span.verified-symbol {
+    font-weight: bold;
+    color: rgba(67, 75, 182, 1);
+    font-size: 170%;
+  }
+
+  span.verified-symbol-small {
+    font-weight: bold;
+    color: rgba(67, 75, 182, 1);
+    font-size: 110%;
+  }
+
+  /* Misc UI */
+  .note {
+    font-size: 75%;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  .notice {
+    background-color: rgba(35, 50, 55, 0.1);
+    padding: 10px;
+    margin: 10px;
+  }
+
+  .warning {
+    background-color: rgba(152, 75, 67, 0.3);
+    padding: 10px;
+    margin: 10px;
+  }
+
+  .tucked {
+    text-align: right;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  /* Toggle arrows */
+  span.toggle-up,
+  span.toggle-down {
+    display: inline-block;
+    font-size: 80%;
+    transition-property: all;
+    transition-duration: 0.1s;
+    user-select: none;
+  }
+
+  span.toggle-down {
+    transform: rotate(90deg);
+  }
+
+  /* Contact page */
+  div.contactfieldWrapper {
+    padding-bottom: 30px;
+  }
+
+  .guardian {
+    display: none;
+  }
+
+  /* Modal (vanilla JS replacement for Bootstrap modal) */
+  .modal-open {
+    overflow: hidden;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1050;
+    overflow: auto;
+  }
+
+  .modal.in {
+    display: block;
+  }
+
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1040;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .modal-backdrop.in {
+    opacity: 1;
+  }
+
+  .modal-dialog {
+    position: relative;
+    width: auto;
+    margin: 30px auto;
+    transform: translateY(-25%);
+    transition: transform 0.3s ease-out;
+  }
+
+  .modal.in .modal-dialog {
+    transform: translateY(0);
+  }
+}

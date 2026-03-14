@@ -1,0 +1,18 @@
+/* Project-specific styles - Tailwind handles most styling now */
+
+/* Alert styles for Django messages (fallback if Tailwind not loaded) */
+.alert-debug {
+  background-color: white;
+  border: 1px solid #d6e9c6;
+  color: black;
+  padding: 12px;
+  border-radius: 4px;
+}
+
+.alert-error {
+  background-color: #f2dede;
+  border: 1px solid #eed3d7;
+  color: #b94a48;
+  padding: 12px;
+  border-radius: 4px;
+}

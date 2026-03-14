@@ -1,0 +1,104 @@
+{% load static i18n tailwind_cli %}<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{% block title %}Shakespeare Census{% endblock title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
+
+    {% block css %}
+      {% tailwind_css %}
+      <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500" rel="stylesheet">
+    {% endblock %}
+
+  </head>
+
+  <body class="font-sans bg-white text-dark">
+
+    <nav class="bg-gray-100 shadow-sm mb-4">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="flex justify-between items-center py-3">
+          <!-- Brand -->
+          <a class="text-dark font-medium text-lg hover:text-primary transition-colors" href="{% url 'home' %}">
+            Shakespeare Census
+          </a>
+
+          <!-- Mobile menu button -->
+          <button type="button" class="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-primary" id="mobile-menu-btn" aria-controls="mobile-menu" aria-expanded="false">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path class="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+              <path class="close-icon hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+
+          <!-- Desktop navigation -->
+          <div class="hidden md:flex md:items-center md:space-x-4">
+            <a class="text-dark hover:text-primary transition-colors px-3 py-2" href="{% url 'home' %}">Home</a>
+            <a class="text-dark hover:text-primary transition-colors px-3 py-2" href="{% url 'about' %}">About</a>
+            {% if request.user.is_authenticated %}
+              <a class="text-dark hover:text-primary transition-colors px-3 py-2" href="{% url 'users:detail' request.user.username %}">{% trans "My Profile" %}</a>
+              <a class="text-dark hover:text-primary transition-colors px-3 py-2" href="{% url 'account_logout' %}">{% trans "Sign Out" %}</a>
+            {% else %}
+              <a class="text-dark hover:text-primary transition-colors px-3 py-2" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
+              <a class="text-dark hover:text-primary transition-colors px-3 py-2" href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div class="md:hidden hidden" id="mobile-menu">
+          <div class="pt-2 pb-3 space-y-1">
+            <a class="block px-3 py-2 text-dark hover:bg-gray-200 rounded-md" href="{% url 'home' %}">Home</a>
+            <a class="block px-3 py-2 text-dark hover:bg-gray-200 rounded-md" href="{% url 'about' %}">About</a>
+            {% if request.user.is_authenticated %}
+              <a class="block px-3 py-2 text-dark hover:bg-gray-200 rounded-md" href="{% url 'users:detail' request.user.username %}">{% trans "My Profile" %}</a>
+              <a class="block px-3 py-2 text-dark hover:bg-gray-200 rounded-md" href="{% url 'account_logout' %}">{% trans "Sign Out" %}</a>
+            {% else %}
+              <a class="block px-3 py-2 text-dark hover:bg-gray-200 rounded-md" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
+              <a class="block px-3 py-2 text-dark hover:bg-gray-200 rounded-md" href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-4">
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="mb-4 px-4 py-3 rounded-md {% if message.tags == 'error' %}bg-red-100 border border-red-400 text-red-700{% elif message.tags == 'warning' %}bg-yellow-100 border border-yellow-400 text-yellow-700{% elif message.tags == 'success' %}bg-green-100 border border-green-400 text-green-700{% elif message.tags == 'info' %}bg-blue-100 border border-blue-400 text-blue-700{% else %}bg-gray-100 border border-gray-400 text-gray-700{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {% block content %}
+        <p>Use this document as a way to quick start any new project.</p>
+      {% endblock content %}
+
+    </div>
+
+    {% block modal %}{% endblock modal %}
+
+    {% block javascript %}
+      <script>
+      // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+          const menu = document.getElementById('mobile-menu');
+          const menuIcon = this.querySelector('.menu-icon');
+          const closeIcon = this.querySelector('.close-icon');
+          const isExpanded = this.getAttribute('aria-expanded') === 'true';
+
+          menu.classList.toggle('hidden');
+          this.setAttribute('aria-expanded', !isExpanded);
+          menuIcon.classList.toggle('hidden');
+          closeIcon.classList.toggle('hidden');
+        });
+      </script>
+    {% endblock javascript %}
+  </body>
+</html>

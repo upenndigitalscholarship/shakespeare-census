@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% block title %}Members{% endblock %}
+
+{% block content %}
+  <h2 class="text-2xl font-light mb-4">Users</h2>
+
+  <div class="space-y-2">
+    {% for user in user_list %}
+      <a href="{% url 'users:detail' user.username %}" class="block p-4 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors">
+        <span class="text-dark font-medium">{{ user.username }}</span>
+      </a>
+    {% endfor %}
+  </div>
+{% endblock content %}

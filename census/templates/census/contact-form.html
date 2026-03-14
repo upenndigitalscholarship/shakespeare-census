@@ -2,18 +2,10 @@
 {% load static %}
 {% block content %}
 
-<link href="{% static 'census/style.css' %}" rel="stylesheet" type="text/css" />
+  <h1 class="text-center text-xl font-light my-4">Contact Us</h1>
 
-<h1 align="center">Contact Us</h1>
-
-<div class="contactfieldWrapper">
-  <form action="" method="post">
-    {% csrf_token %}
-    <table align="center" cellpadding="10px" frame="box" width="500px">
-      {{ form.as_table }}
-      <td><input type="submit"></input></td><td></td>
-    </table>
-  </form>
-</div>
+  {% for c in content %}
+    <p class="static-text">{{ c|safe }}</p>
+  {% endfor %}
 
 {% endblock %}

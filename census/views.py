@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.template import loader
 from . import models
@@ -34,12 +34,49 @@ def get_draft_if_exists(selected_copy):
         return selected_copy.drafts.get()
 
 
-def search_sort_key(copy):
-    return (
-        int(copy.issue.start_date),
-        title_sort_key(copy.issue.edition.title),
-        strip_article(copy.location.name),
-    )
+def search_sort_date(copy):
+    return (copy_date_sort_key(copy), title_sort_key(copy.issue.edition.title), copy_location_sort_key(copy))
+
+
+def search_sort_title(copy):
+    return (title_sort_key(copy.issue.edition.title), copy_date_sort_key(copy), copy_location_sort_key(copy))
+
+
+def search_sort_location(copy):
+    return (copy_location_sort_key(copy), copy_date_sort_key(copy), title_sort_key(copy.issue.edition.title))
+
+
+def search_sort_stc(copy):
+    return (copy.issue.stc_wing, copy_location_sort_key(copy))
+
+
+def copy_date_sort_key(c):
+    return int(c.issue.start_date)
+
+
+def copy_nsc_sort_key(c):
+    nsc = c.nsc if c.nsc is not None else ""
+    nsc_a = 0
+    nsc_b = 0
+    try:
+        if "." in nsc:
+            a, b = nsc.split(".", maxsplit=1)
+            nsc_a, nsc_b = int(a), int(b)
+        else:
+            nsc_a = int(nsc)
+    except ValueError:
+        pass
+    return (nsc_a, nsc_b)
+
+
+def copy_location_sort_key(c):
+    name = c.location.name
+    return strip_article(name if name else "")
+
+
+def copy_shelfmark_sort_key(c):
+    sm = c.shelfmark
+    return sm if sm else ""
 
 
 def strip_article(s):
@@ -53,6 +90,8 @@ def strip_article(s):
 
 def title_sort_key(title_object):
     title = title_object.title
+    if title == "Comedies, Histories, and Tragedies":
+        title = " " + title
     if title and title[0].isdigit():
         title = title.split()
         return strip_article(" ".join(title[1:] + [title[0]]))
@@ -62,11 +101,13 @@ def title_sort_key(title_object):
 
 def issue_sort_key(i):
     ed_number = i.edition.edition_number
-    return int(ed_number) if ed_number.isdigit() else float("inf")
+    ed_idx = int(ed_number) if ed_number.isdigit() else float("inf")
+    return (ed_idx, i.stc_wing)
 
 
 def copy_sort_key(c):
-    return (strip_article(c.location.name), c.shelfmark)
+    nsc_a, nsc_b = copy_nsc_sort_key(c)
+    return (copy_location_sort_key(c), copy_shelfmark_sort_key(c), nsc_a, nsc_b)
 
 
 def convert_year_range(year):
@@ -89,47 +130,154 @@ def get_icon_path(id=None):
 ## VIEW FUNCTIONS ##
 
 
-def search(request):
-    template = loader.get_template("census/search-results.html")
-    field = request.GET.get("field")
-    value = request.GET.get("value")
-    print(field)
-    print(value)
-    copy_list = models.CanonicalCopy.objects.all()
+def get_collection(copy_list, coll_name):
+    if coll_name == "earlyprovenance":
+        results = copy_list.filter(provenanceownership__owner__start_century="17")
+        display = "Copies with known early provenance (before 1700)"
+    elif coll_name == "womanowner":
+        results = copy_list.filter(provenanceownership__owner__gender="F")
+        display = "Copies with a known woman owner"
+    elif coll_name == "earlywomanowner":
+        results = copy_list.filter(
+            Q(provenanceownership__owner__gender="F") &
+            (Q(provenanceownership__owner__start_century="17") |
+             Q(provenanceownership__owner__start_century="18"))
+        )
+        display = "Copies with a known woman owner before 1800"
+    elif coll_name == "marginalia":
+        results = copy_list.exclude(Q(marginalia="") | Q(marginalia=None))
+        display = "Copies that include marginalia"
+    elif coll_name == "earlysammelband":
+        results = copy_list.filter(in_early_sammelband=True)
+        display = "Copies in an early sammelband"
+    else:
+        raise Http404("Not found")
+    return results, display
 
-    if field == "stc" or field is None and value:
-        field = "STC / Wing"
+
+def autofill_collection(request, query=None):
+    collection = [
+        {"label": "With known early provenance (before 1700)", "value": "earlyprovenance"},
+        {"label": "With a known woman owner", "value": "womanowner"},
+        {"label": "With a known woman owner before 1800", "value": "earlywomanowner"},
+        {"label": "Includes marginalia", "value": "marginalia"},
+        {"label": "In an early sammelband", "value": "earlysammelband"},
+    ]
+    return JsonResponse({"matches": collection})
+
+
+def autofill_location(request, query=None):
+    if query is not None:
+        location_matches = models.Location.objects.filter(name__icontains=query)
+        match_object = {"matches": [m.name for m in location_matches]}
+    else:
+        match_object = {"matches": []}
+    return JsonResponse(match_object)
+
+
+def autofill_provenance(request, query=None):
+    if query is not None:
+        prov_matches = models.ProvenanceName.objects.filter(name__icontains=query)
+        match_object = {"matches": [m.name for m in prov_matches]}
+    else:
+        match_object = {"matches": []}
+    return JsonResponse(match_object)
+
+
+def search(request, field=None, value=None, order=None):
+    template = loader.get_template("census/search-results.html")
+    field = field if field is not None else request.GET.get("field")
+    value = value if value is not None else request.GET.get("value")
+    order = order if order is not None else request.GET.get("order")
+    copy_list = models.CanonicalCopy.objects.all()
+    display_field = field
+    display_value = value
+
+    if field == "keyword" or field is None and value:
+        field = "keyword"
+        display_field = "Keyword Search"
+        query = (
+            Q(marginalia__icontains=value)
+            | Q(binding__icontains=value)
+            | Q(binder__icontains=value)
+            | Q(bookplate__icontains=value)
+            | Q(bookplate_location__icontains=value)
+            | Q(bartlett1939_notes__icontains=value)
+            | Q(bartlett1916_notes__icontains=value)
+            | Q(lee_notes__icontains=value)
+            | Q(rasmussen_west_notes__icontains=value)
+            | Q(local_notes__icontains=value)
+            | Q(prov_info__icontains=value)
+            | Q(bibliography__icontains=value)
+            | Q(provenanceownership__owner__name__icontains=value)
+        )
+        result_list = copy_list.filter(query)
+    elif field == "stc" and value:
+        display_field = "STC / Wing"
         result_list = copy_list.filter(issue__stc_wing__icontains=value)
-        print(result_list)
+    elif field == "nsc" and value:
+        display_field = "SC"
+        result_list = copy_list.filter(nsc=value)
     elif field == "year" and value:
-        field = "Year"
+        display_field = "Year"
         year_range = convert_year_range(value)
         if year_range:
             start, end = year_range
-            result_list = copy_list.filter(
-                issue__start_date__lte=end, issue__end_date__gte=start
-            )
+            result_list = copy_list.filter(issue__start_date__lte=end, issue__end_date__gte=start)
         else:
             result_list = copy_list.filter(issue__year__icontains=value)
     elif field == "location" and value:
-        field = "Location"
+        display_field = "Location"
         result_list = copy_list.filter(location__name__icontains=value)
     elif field == "bartlett" and value:
-        field = "Bartlett"
+        display_field = "Bartlett"
         result_list = copy_list.filter(Q(bartlett1916=value) | Q(bartlett1939=value))
+    elif field == "provenance_name" and value:
+        display_field = "Provenance Name"
+        result_list = copy_list.filter(provenanceownership__owner__name__icontains=value)
+    elif field == "unverified":
+        display_field = "Unverified"
+        display_value = "All"
+        result_list = copy_list.filter(location_verified=False)
+        if order is None:
+            order = "location"
+    elif field == "ghosts":
+        display_field = "Ghosts"
+        display_value = "All"
+        result_list = models.FalseCopy.objects.all()
+    elif field == "collection":
+        result_list, display_field = get_collection(copy_list, value)
+        display_value = "All"
+    else:
+        result_list = models.CanonicalCopy.objects.none()
 
-    result_list = sorted(result_list, key=search_sort_key)
+    result_list = result_list.exclude(issue__edition__title__hidden=True)
+    result_list = result_list.distinct()
 
-    copy_count = len([c for c in result_list if not c.fragment])
-    fragment_count = len([c for c in result_list if c.fragment])
+    if order is None or order == "date":
+        result_list = sorted(result_list, key=search_sort_date)
+    elif order == "title":
+        result_list = sorted(result_list, key=search_sort_title)
+    elif order == "location":
+        result_list = sorted(result_list, key=search_sort_location)
+    elif order == "stc":
+        result_list = sorted(result_list, key=search_sort_stc)
+    elif order == "sc":
+        result_list = sorted(result_list, key=copy_nsc_sort_key)
+    else:
+        raise Http404("Not found")
+
+    frag_count = sum(c.fragment for c in result_list)
 
     context = {
         "icon_path": get_icon_path(),
         "value": value,
         "field": field,
+        "display_value": display_value,
+        "display_field": display_field,
         "result_list": result_list,
-        "copy_count": copy_count,
-        "fragment_count": fragment_count,
+        "copy_count": len(result_list) - frag_count,
+        "frag_count": frag_count,
     }
 
     return HttpResponse(template.render(context, request))

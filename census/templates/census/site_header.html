@@ -19,22 +19,131 @@
     <a href="#search" id="site-search-button" class="px-2.5 cursor-pointer" style="color:#233237;">search</a>
 </nav>
 
-<div class="text-center min-h-8 pb-4">
+<div class="search-bar text-center min-h-8 pb-4" style="position:relative;">
     <form id="search-bar-form" class="hidden mb-0" action="/search/" method="get">
-        <select name="field">
+        <select id="search-bar-form-field" name="field">
             <option disabled selected value>Search by...</option>
+            <option value="keyword">Keyword</option>
             <option value="location">Location</option>
+            <option value="provenance_name">Provenance Name</option>
+            <option value="collection">Specific Features</option>
             <option value="year">Year</option>
             <option value="stc">STC / Wing #</option>
             <option value="bartlett">Bartlett #</option>
+            <option value="nsc">SC #</option>
         </select>
-        <input type="text" name="value" placeholder="Search..">
-        <input type="submit" value="Submit">
+        <span style="position:relative;display:inline-block;">
+            <input id="search-bar-form-text" type="text" name="value" placeholder="Search..">
+            <ul id="search-autocomplete-list"></ul>
+        </span>
+        <input id="search-bar-form-submit" type="submit" value="Submit">
     </form>
 </div>
 
+<style>
+    #search-autocomplete-list {
+        display: none;
+        position: absolute;
+        left: 0;
+        top: 100%;
+        z-index: 1000;
+        background: rgb(245, 237, 236);
+        border: 1px solid #ccc;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        min-width: 100%;
+        text-align: left;
+    }
+    #search-autocomplete-list li {
+        padding: 4px 8px;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    #search-autocomplete-list li:hover,
+    #search-autocomplete-list li.active {
+        background: #eee;
+    }
+</style>
+
 <script>
-    utils.get.id('site-search-button').addEventListener('click', function () {
-        utils.togglehide.id('search-bar-form');
+(function () {
+    var autofillMap = {
+        location: '/autofill/location/',
+        provenance_name: '/autofill/provenance/',
+        collection: '/autofill/collection/'
+    };
+
+    var searchButton = document.getElementById('site-search-button');
+    var form = document.getElementById('search-bar-form');
+    var fieldSelect = document.getElementById('search-bar-form-field');
+    var input = document.getElementById('search-bar-form-text');
+    var dropdown = document.getElementById('search-autocomplete-list');
+    var debounceTimer = null;
+
+    searchButton.addEventListener('click', function () {
+        form.classList.toggle('hidden');
     });
+
+    function getSelectedField() {
+        return fieldSelect.options[fieldSelect.selectedIndex].value;
+    }
+
+    function showSuggestions(matches) {
+        dropdown.innerHTML = '';
+        if (!matches || matches.length === 0) {
+            dropdown.style.display = 'none';
+            return;
+        }
+        matches.forEach(function (match) {
+            // Collection returns {label, value} objects; other endpoints return plain strings
+            var label = match.label !== undefined ? match.label : match;
+            var value = match.value !== undefined ? match.value : match;
+            var li = document.createElement('li');
+            li.textContent = label;
+            li.addEventListener('mousedown', function (e) {
+                // preventDefault keeps the input from losing focus before we can read the click
+                e.preventDefault();
+                input.value = value;
+                dropdown.style.display = 'none';
+                form.submit();
+            });
+            dropdown.appendChild(li);
+        });
+        dropdown.style.display = 'block';
+    }
+
+    function fetchSuggestions(field, query) {
+        fetch(autofillMap[field] + encodeURIComponent(query))
+            .then(function (r) { return r.json(); })
+            .then(function (data) { showSuggestions(data.matches); });
+    }
+
+    input.addEventListener('input', function () {
+        var field = getSelectedField();
+        if (!autofillMap.hasOwnProperty(field) || input.value.length < 3) {
+            dropdown.style.display = 'none';
+            return;
+        }
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function () {
+            fetchSuggestions(field, input.value);
+        }, 200);
+    });
+
+    form.addEventListener('submit', function () {
+        setTimeout(function () { input.value = ''; }, 0);
+    });
+
+    input.addEventListener('blur', function () {
+        // Small delay so mousedown on a suggestion fires first
+        setTimeout(function () { dropdown.style.display = 'none'; }, 150);
+    });
+
+    fieldSelect.addEventListener('change', function () {
+        if (getSelectedField() === 'collection') {
+            fetchSuggestions('collection', '   ');
+        }
+    });
+}());
 </script>

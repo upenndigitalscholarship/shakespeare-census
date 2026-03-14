@@ -1,24 +1,128 @@
 {% extends "census/base.html" %}
 {% load static %}
+{% load humanize %}
 {% block content %}
-<div class="max-w-3xl mx-auto">
-    <h3 class="text-lg font-light mb-6">Administrative Tasks</h3>
 
-    <div class="mb-10">
-        <h4 class="font-light mb-2">Verify changes made by librarians</h4>
-        <p class="mb-1"><a href="{% url 'admin_verify_location_verified' %}" class="button">Verify copy location</a></p>
-        <p class="mb-1"><a href="{% url 'admin_edit_verify' %}" class="button">Verify librarian edits</a></p>
-        <p class="mb-1"><a href="{% url 'admin_submission_verify' %}" class="button">Verify new submissions</a></p>
+<div>
+    <script type="text/javascript" src="{% static 'census/js/modal.js' %}"></script>
+    <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+    <div id="copyModal" class="modal" role="dialog"></div>
+</div>
+
+<div class="flex items-start mx-[10%] mb-6" style="font-family:'Open Sans',AppleGothic,sans-serif;">
+    <div class="shrink-0 mr-4">
+        <div class="w-[100px] h-[100px] rounded-full border flex items-center justify-center" style="border-color:#233237;">
+            <img class="h-[80px] w-[80px] rounded-[20px]" src="{% static icon_path %}">
+        </div>
     </div>
-
-    <div class="mb-10">
-        <h4 class="font-light mb-2">View public comments and submissions</h4>
-        <p class="mb-1"><a href="{% url 'admin:census_contactform_changelist' %}" class="button">Comments and submissions</a></p>
-    </div>
-
-    <div class="mb-10">
-        <h4 class="font-light mb-2">Other administration tools</h4>
-        <p class="mb-1"><a href="{% url 'admin:index' %}" class="button">Other administration tools</a></p>
+    <div class="text-xl pt-1">
+        <div>Search Results</div>
+        <div class="text-sm mt-1">
+            {% if field == "ghosts" %}
+                ESTC Ghosts
+            {% elif display_value == "All" %}
+                {{ display_field }}
+            {% else %}
+                {{ display_field }}: {{ display_value }}
+            {% endif %}
+        </div>
+        <div class="text-sm mt-1">
+            {% if field == "ghosts" %}
+                <span>{{ copy_count }} Records</span>
+            {% elif copy_count > 0 or frag_count > 0 %}
+                <span>Extant copies: {{ copy_count }}{% if frag_count == 1 %}, plus {{ frag_count }} fragment{% elif frag_count > 1 %}, plus {{ frag_count }} fragments{% endif %}</span>
+            {% endif %}
+        </div>
     </div>
 </div>
+
+<table class="play-detail-set">
+    {% if result_list %}
+    <tr>
+        <th class="terse">
+            <a href="{% url 'search_for_something' %}?field={{ field }}&value={{ value }}&order=sc">SC&nbsp;#</a>
+            {% if request.GET.order == 'sc' %}&nbsp;▼{% endif %}
+        </th>
+        <th>
+            <a href="{% url 'search_for_something' %}?field={{ field }}&value={{ value }}&order=date">Year</a>
+            {% if not request.GET.order or request.GET.order == 'date' %}&nbsp;▼{% endif %}
+        </th>
+        <th class="detailed">
+            <a href="{% url 'search_for_something' %}?field={{ field }}&value={{ value }}&order=title">Title</a>
+            {% if request.GET.order == 'title' %}&nbsp;▼{% endif %}
+        </th>
+        <th class="detailed">
+            <a href="{% url 'search_for_something' %}?field={{ field }}&value={{ value }}&order=location">Location</a>
+            {% if request.GET.order == 'location' %}&nbsp;▼{% endif %}
+        </th>
+        <th class="terse">
+            <a href="{% url 'search_for_something' %}?field={{ field }}&value={{ value }}&order=stc">STC&nbsp;/&nbsp;Wing</a>
+            {% if request.GET.order == 'stc' %}&nbsp;▼{% endif %}
+        </th>
+        <th class="w-12 px-3"></th>
+        <th class="w-12 px-3"></th>
+    </tr>
+    {% for copy in result_list %}
+    <tr>
+        <td>
+            {% if copy.nsc and copy.nsc != '0' %}
+                <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                    {{ copy.nsc }}
+                </a>
+            {% else %}
+                &nbsp;
+            {% endif %}
+            {% if user.is_staff %}
+                <span class="note">[<a href="{% url 'admin:census_canonicalcopy_change' copy.id %}">Edit&nbsp;copy</a>]</span>
+            {% endif %}
+        </td>
+        <td>
+            <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                {{ copy.issue.year }}
+            </a>
+        </td>
+        <td>
+            <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                {{ copy.issue.edition.title }}
+            </a>
+        </td>
+        <td>
+            <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                {{ copy.location.name }}
+            </a>
+        </td>
+        <td>
+            <a href="{% url 'copy' copy.issue.id %}" target="_blank" title="Go to Edition">
+                {{ copy.issue.stc_wing }}&nbsp;&nbsp;<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="10" height="10" fill="currentColor" style="display:inline;vertical-align:middle;" aria-hidden="true"><path d="M432 320H400a16 16 0 0 0-16 16V448H64V128H208a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16H48A48 48 0 0 0 0 112V464a48 48 0 0 0 48 48H400a48 48 0 0 0 48-48V336a16 16 0 0 0-16-16zM488 0h-128c-21.4 0-32 25.9-17 41l35.7 35.7L135 320.4a24 24 0 0 0 0 34l22.6 22.6a24 24 0 0 0 34 0l243.7-243.7L471 169c15 15 41 4.5 41-17V24a24 24 0 0 0-24-24z"/></svg>
+            </a>
+        </td>
+        <td class="w-12 px-3">
+            {% if copy.fragment %}
+                <span title="This copy is a fragment.">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="16" height="16" fill="currentColor" aria-hidden="true">
+                        <path d="M475.115 163.781L336 252.309v-68.28c0-18.916-20.931-30.399-36.885-20.248L160 252.309V56c0-13.255-10.745-24-24-24H24C10.745 32 0 42.745 0 56v400c0 13.255 10.745 24 24 24h528c13.255 0 24-10.745 24-24V184.029c0-18.917-20.931-30.399-36.885-20.248z"/>
+                    </svg>
+                </span>
+            {% else %}
+                &nbsp;
+            {% endif %}
+        </td>
+        <td class="w-12 px-3">
+            {% if copy.digital_facsimile_url %}
+                <a href="{{ copy.digital_facsimile_url }}" target="_blank" title="View digital facsimile">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16" height="16" fill="currentColor" aria-hidden="true">
+                        <path d="M32 64 L480 64 C497.7 64 512 78.3 512 96 L512 416 C512 433.7 497.7 448 480 448 L32 448 C14.3 448 0 433.7 0 416 L0 96 C0 78.3 14.3 64 32 64 Z M256 128 A128 128 0 1 0 256 384 A128 128 0 1 0 256 128 Z M256 176 A80 80 0 1 1 256 336 A80 80 0 1 1 256 176 Z"/>
+                    </svg>
+                </a>
+            {% else %}
+                &nbsp;
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    {% else %}
+    <tr><td colspan="7"><p class="text-center">No copies found.</p></td></tr>
+    {% endif %}
+</table>
+
 {% endblock content %}

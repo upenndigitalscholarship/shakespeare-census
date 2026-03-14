@@ -59,4 +59,9 @@ urlpatterns = [
     # url for the ajax view that creates the new draftcopy
     path("create_draftcopy/", views.create_draftcopy, name="create_draftcopy"),
     path("location_incorrect/", views.location_incorrect, name="location_incorrect"),
+    # Autofill endpoints for search bar
+    path("autofill/location/<str:query>", views.autofill_location, name="autofill_location"),
+    path("autofill/provenance/<str:query>", views.autofill_provenance, name="autofill_provenance"),
+    path("autofill/collection/", views.autofill_collection, name="autofill_collection"),
+    path("autofill/collection/<str:query>", views.autofill_collection, name="autofill_collection_query"),
 ]

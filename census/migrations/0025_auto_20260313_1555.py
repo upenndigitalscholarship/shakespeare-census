@@ -137,10 +137,68 @@ class Migration(migrations.Migration):
                 ),
             ],
             database_operations=[
-                # Only actual DB change: rename Lee to lee
+                # --- census_title ---
+                # Rename Apocryphal → apocryphal if still uppercase (production), then add missing columns
                 migrations.RunSQL(
-                    sql='ALTER TABLE census_basecopy RENAME COLUMN "Lee" TO lee;',
+                    sql="""DO $$ BEGIN
+                        IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='census_title' AND column_name='Apocryphal') THEN
+                            ALTER TABLE census_title RENAME COLUMN "Apocryphal" TO apocryphal;
+                        END IF;
+                    END $$;""",
+                    reverse_sql='ALTER TABLE census_title RENAME COLUMN apocryphal TO "Apocryphal";',
+                ),
+                migrations.RunSQL(
+                    sql='ALTER TABLE census_title ADD COLUMN IF NOT EXISTS hidden boolean NOT NULL DEFAULT false;',
+                    reverse_sql='ALTER TABLE census_title DROP COLUMN IF EXISTS hidden;',
+                ),
+                migrations.RunSQL(
+                    sql='ALTER TABLE census_title ADD COLUMN IF NOT EXISTS image varchar(500) NULL;',
+                    reverse_sql='ALTER TABLE census_title DROP COLUMN IF EXISTS image;',
+                ),
+                migrations.RunSQL(
+                    sql='ALTER TABLE census_title ADD COLUMN IF NOT EXISTS issue boolean NOT NULL DEFAULT false;',
+                    reverse_sql='ALTER TABLE census_title DROP COLUMN IF EXISTS issue;',
+                ),
+
+                # --- census_basecopy ---
+                # Rename Lee to lee if it exists (production), otherwise it's already lowercase
+                migrations.RunSQL(
+                    sql="""DO $$ BEGIN
+                        IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='census_basecopy' AND column_name='Lee') THEN
+                            ALTER TABLE census_basecopy RENAME COLUMN "Lee" TO lee;
+                        END IF;
+                    END $$;""",
                     reverse_sql='ALTER TABLE census_basecopy RENAME COLUMN lee TO "Lee";',
+                ),
+                # Add columns that exist in production but never in a migration
+                migrations.RunSQL(
+                    sql='ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS digital_facsimile_url varchar(500) NULL;',
+                    reverse_sql='ALTER TABLE census_basecopy DROP COLUMN IF EXISTS digital_facsimile_url;',
+                ),
+                migrations.RunSQL(
+                    sql='ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS bartlett_ms_annotations text NULL;',
+                    reverse_sql='ALTER TABLE census_basecopy DROP COLUMN IF EXISTS bartlett_ms_annotations;',
+                ),
+                migrations.RunSQL(
+                    sql='ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS fragment boolean NOT NULL DEFAULT false;',
+                    reverse_sql='ALTER TABLE census_basecopy DROP COLUMN IF EXISTS fragment;',
+                ),
+                migrations.RunSQL(
+                    sql='ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS in_early_sammelband boolean NOT NULL DEFAULT false;',
+                    reverse_sql='ALTER TABLE census_basecopy DROP COLUMN IF EXISTS in_early_sammelband;',
+                ),
+                migrations.RunSQL(
+                    sql='ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS rasmussen_west integer NULL DEFAULT 0;',
+                    reverse_sql='ALTER TABLE census_basecopy DROP COLUMN IF EXISTS rasmussen_west;',
+                ),
+                migrations.RunSQL(
+                    sql='ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS rasmussen_west_notes text NULL;',
+                    reverse_sql='ALTER TABLE census_basecopy DROP COLUMN IF EXISTS rasmussen_west_notes;',
+                ),
+                # lee: renamed from "Lee" in production (handled above); add if still missing (fresh DB)
+                migrations.RunSQL(
+                    sql='ALTER TABLE census_basecopy ADD COLUMN IF NOT EXISTS lee integer NULL DEFAULT 0;',
+                    reverse_sql='ALTER TABLE census_basecopy DROP COLUMN IF EXISTS lee;',
                 ),
             ],
         ),

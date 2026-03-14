@@ -1,89 +1,24 @@
 {% extends "census/base.html" %}
 {% load static %}
-{% load humanize %}
 {% block content %}
+<div class="max-w-3xl mx-auto">
+    <h3 class="text-lg font-light mb-6">Administrative Tasks</h3>
 
-<div class = "wrapper">
-    <div>
-        <script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
-        <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
-        <link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
-
-        <div id="copyModal" class="modal fade" role="dialog"></div>
+    <div class="mb-10">
+        <h4 class="font-light mb-2">Verify changes made by librarians</h4>
+        <p class="mb-1"><a href="{% url 'admin_verify_location_verified' %}" class="button">Verify copy location</a></p>
+        <p class="mb-1"><a href="{% url 'admin_edit_verify' %}" class="button">Verify librarian edits</a></p>
+        <p class="mb-1"><a href="{% url 'admin_submission_verify' %}" class="button">Verify new submissions</a></p>
     </div>
-    <table class="play-title-header">
-        <tr>
-            <td rowspan="3" class="play-title-header-icon">
-                <div class="play-title-icon-border">
-                <img class="play-title-icon-generic" src="{% static icon_path %}">
-                </div>
-            </td>
-            <td class="play-title-header">
-                Search Results
-            </td>
-        </tr>
-        <tr>
-            <td class="play-issue-header">
-                {{ field }}: {{ value }}
-            </td>
-        </tr>
-        <tr>
-            <td class="play-issue-header">
-                <span>Extant copies: {{ copy_count }}{% if fragment_count > 0 %}, plus {{ fragment_count }} fragment{{ fragment_count|pluralize }}{% endif %}</span>
-            </td>
-        </tr>
-    </table>
 
-    <table class="play-detail-set">
+    <div class="mb-10">
+        <h4 class="font-light mb-2">View public comments and submissions</h4>
+        <p class="mb-1"><a href="{% url 'admin:census_contactform_changelist' %}" class="button">Comments and submissions</a></p>
+    </div>
 
-        {% if result_list %}
-        <tr>
-            <th class="terse"> SC # </th>
-            <th> Year </th>
-            <th class="detailed"> Title </th>
-            <th class="detailed"> Location </th>
-            <th class="terse"> STC / Wing </th>
-        </tr>
-        {% for copy in result_list %}
-        <tr>
-            <td>
-                {% if copy.nsc and copy.nsc != '0' %}
-                    <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
-                        {{ copy.nsc }}
-                    </a>
-                {% else %}
-                    &nbsp;
-                {% endif %}
-                {% if user.is_staff %}
-                    <span class="note">[<a href="{% url 'admin:census_canonicalcopy_change' copy.id %}">Edit copy</a>]</span>
-                {% endif %}
-            </td>
-            <td>
-                <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
-                    {{ copy.issue.year }}
-                </a>
-            </td>
-            <td>
-                <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
-                    {{ copy.issue.edition.title }}
-                </a>
-            </td>
-            <td>
-                <!-- <a class="copy_data" id="data{{copy.id}}" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details"> -->
-                <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
-                    {{copy.location.name}}
-                </a>
-            </td>
-            <td>
-                <a href="{% url 'copy' copy.issue.id %}" target="_blank" title="Go to Edition">{{ copy.issue.stc_wing }}&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-external-link-alt"></i></a>
-            </td>
-        </tr>
-        {% endfor %}
-        {% else %}
-        <p class="sansserif" align="center">No copies found.</p>
-        {% endif %}
-    </table>
-
+    <div class="mb-10">
+        <h4 class="font-light mb-2">Other administration tools</h4>
+        <p class="mb-1"><a href="{% url 'admin:index' %}" class="button">Other administration tools</a></p>
+    </div>
 </div>
-
 {% endblock content %}

@@ -1,93 +1,90 @@
-<div class="modal-dialog">
+<div class="modal-dialog bg-white rounded-lg shadow-xl max-w-2xl mx-auto my-8 relative">
     <div class="modal-content">
-        <div class="modal-header">
-            <h3 align="left" class="modal-title">Copy Details for {{ copy.issue.edition.title }} ({{ copy.issue.year }})</h3>
+        <div class="modal-header px-6 py-4 rounded-t-lg border-b border-gray-200" style="background-color:rgba(152,75,67,0.3);">
+            <h3 class="modal-title text-left text-lg font-light m-0">Copy Details for {{ copy.issue.edition.title }} ({{ copy.issue.year }})</h3>
         </div>
-        <div class="modal-body">
-            <p align="left"><strong>SC #</strong>: {% if copy.nsc and copy.nsc != '0' %}{{ copy.nsc }}{% endif %}</p>
+        <div class="modal-body p-6 max-h-[70vh] overflow-y-auto">
+            <p class="text-left mb-2"><strong>SC #</strong>: {% if copy.nsc and copy.nsc != '0' %}{{ copy.nsc }}{% endif %}</p>
 
-            <p align="left"><strong>Location</strong>: {% if copy.location %}{{ copy.location.name }}{% endif %}</p>
+            <p class="text-left mb-2"><strong>Location</strong>: {% if copy.location %}{{ copy.location.name }}{% endif %}</p>
 
-            <p align="left"><strong>Shelfmark</strong>: {% if copy.shelfmark and copy.shelfmark != "[Shelfmark not available]" %}{{ copy.shelfmark }}{% endif %}</p>
+            <p class="text-left mb-2"><strong>Shelfmark</strong>: {% if copy.shelfmark and copy.shelfmark != "[Shelfmark not available]" %}{{ copy.shelfmark }}{% endif %}</p>
 
             {% if copy.issue.notes %}
-            <p align="left"><strong>Notes about issue</strong>: {{ copy.issue.notes }}</p>
+            <p class="text-left mb-2"><strong>Notes about issue</strong>: {{ copy.issue.notes }}</p>
             {% endif %}
 
             {% if copy.local_notes %}
-            <p align="left"><strong>Copy-specific notes</strong>: {{ copy.local_notes}}</p>
+            <p class="text-left mb-2"><strong>Copy-specific notes</strong>: {{ copy.local_notes}}</p>
             {% endif %}
 
             {% if copy.prov_info %}
-            <p align="left"><strong>Provenance</strong>: {{ copy.prov_info}}</p>
+            <p class="text-left mb-2"><strong>Provenance</strong>: {{ copy.prov_info}}</p>
             {% endif %}
 
             {% if copy.height %}
-            <p align="left"><strong>Height</strong>: {{ copy.height }} cm</p>
+            <p class="text-left mb-2"><strong>Height</strong>: {{ copy.height }} cm</p>
             {% endif %}
 
             {% if copy.width %}
-            <p align="left"><strong>Width</strong>: {{ copy.width }} cm</p>
+            <p class="text-left mb-2"><strong>Width</strong>: {{ copy.width }} cm</p>
             {% endif %}
 
             {% if copy.marginalia %}
-            <p align="left"><strong>Marginalia</strong>: {{ copy.marginalia }}</p>
+            <p class="text-left mb-2"><strong>Marginalia</strong>: {{ copy.marginalia }}</p>
             {% endif %}
 
             {% if copy.condition %}
-            <p align="left"><strong>Condition</strong>: {{ copy.condition }}</p>
+            <p class="text-left mb-2"><strong>Condition</strong>: {{ copy.condition }}</p>
             {% endif %}
 
             {% if copy.rasmussen_west %}
-            <p align="left"><strong>Rasmussen #:</strong>: {{ copy.rasmussen_west }}</p>
+            <p class="text-left mb-2"><strong>Rasmussen #:</strong>: {{ copy.rasmussen_west }}</p>
 
-            {% endif %} 
+            {% endif %}
             {% if copy.rasmussen_west_notes %}
-            <p align="left"><strong>Rasmussen Notes:</strong>: {{ copy.rasmussen_west_notes }}</p>
-            {% endif %} 
+            <p class="text-left mb-2"><strong>Rasmussen Notes:</strong>: {{ copy.rasmussen_west_notes }}</p>
+            {% endif %}
 
             {% if copy.binding %}
-            <p align="left"><strong>Binding</strong>: {{ copy.binding }}</p>
+            <p class="text-left mb-2"><strong>Binding</strong>: {{ copy.binding }}</p>
             {% endif %}
 
             {% if copy.binder %}
-            <p align="left"><strong>Binder</strong>: {{ copy.binder }}</p>
+            <p class="text-left mb-2"><strong>Binder</strong>: {{ copy.binder }}</p>
             {% endif %}
 
             {% if copy.bookplate %}
-            <p align="left"><strong>Bookplate</strong>: {{ copy.bookplate }}</p>
+            <p class="text-left mb-2"><strong>Bookplate</strong>: {{ copy.bookplate }}</p>
             {% endif %}
 
             {% if copy.bookplate_location %}
-            <p align="left"><strong>Bookplate location</strong>: {{ copy.bookplate_location }}</p>
+            <p class="text-left mb-2"><strong>Bookplate location</strong>: {{ copy.bookplate_location }}</p>
             {% endif %}
 
             {% if copy.lee_notes %}
-            <p align="left"><strong>Lee notes</strong>: {{ copy.lee_notes }}</p>
+            <p class="text-left mb-2"><strong>Lee notes</strong>: {{ copy.lee_notes }}</p>
             {% endif %}
 
             {% if copy.bibliography %}
-            <p align="left"><strong>For scholarship on this copy, see</strong>: {{ copy.bibliography }}</p>
+            <p class="text-left mb-2"><strong>For scholarship on this copy, see</strong>: {{ copy.bibliography }}</p>
             {% endif %}
 
             {% if copy.bartlett1939 %}
-            <p align="left"><strong>Bartlett 1939 #</strong>: {{ copy.bartlett1939 }}</p>
+            <p class="text-left mb-2"><strong>Bartlett 1939 #</strong>: {{ copy.bartlett1939 }}</p>
             {% endif %}
 
             {% if copy.bartlett1916 %}
-            <p align="left"><strong>Bartlett 1916 #</strong>: {{ copy.bartlett1916 }}</p>
+            <p class="text-left mb-2"><strong>Bartlett 1916 #</strong>: {{ copy.bartlett1916 }}</p>
             {% endif %}
 
             {% if copy.bartlett1939_notes %}
-            <p align="left"><strong>Bartlett 1939 notes</strong>: {{ copy.bartlett1939_notes }}</p>
+            <p class="text-left mb-2"><strong>Bartlett 1939 notes</strong>: {{ copy.bartlett1939_notes }}</p>
             {% endif %}
 
             {% if copy.bartlett1916_notes %}
-            <p align="left"><strong>Bartlett 1916 notes</strong>: {{ copy.bartlett1916_notes }}</p>
+            <p class="text-left mb-2"><strong>Bartlett 1916 notes</strong>: {{ copy.bartlett1916_notes }}</p>
             {% endif %}
-
-
-
         </div>
     </div>
 </div>

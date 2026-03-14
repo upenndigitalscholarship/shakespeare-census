@@ -1,26 +1,20 @@
 {% extends "census/base.html" %}
 {% load static %}
 {% block content %}
-<div>
-    <script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
-    <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
-    <link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
+<script type="text/javascript" src="{% static 'census/js/modal.js' %}"></script>
+<script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+<div id="copyModal" class="modal" role="dialog"></div>
 
-    <div id="copyModal" class="modal fade" role="dialog"></div>
-
-</div>
-
-<div class="container">
-    <hr class = "style14" width = "50%"></hr>
+<div class="max-w-3xl mx-auto">
+    <hr class="my-4 w-1/2 mx-auto">
+    <p class="guide-text">You have verified the following copies.</p>
     <p class="guide-text">
-    You have verified the following copies.</p>
-    <p class="guide-text">
-    Please view copy details to see if anything needs to be edited. <br />
-    Edits will be automatically submitted to an administrator for approval.
+        Please view copy details to see if anything needs to be edited.<br />
+        Edits will be automatically submitted to an administrator for approval.
     </p>
-    <hr class="style14" width = "50%"></hr>
+    <hr class="my-4 w-1/2 mx-auto">
 
-    <table class="librarian-select-ui">
+    <table class="librarian-select-ui mx-auto">
         <tbody>
             <tr>
                 <th class="librarian-select-ui-wide">Copies at {{ affiliation }}</th>
@@ -44,21 +38,10 @@
                         Edit details
                     </a>
                 </td>
-
-                <td id="validate {{ copy.id }}">
-                </td>
+                <td id="validate {{ copy.id }}"></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    <br>
-
-
 </div>
-
-
-<script>
-
-</script>
 {% endblock %}

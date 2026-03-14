@@ -1,6 +1,6 @@
-#!/bin/sh
-set -e
-set -u
+#!/usr/bin/env bash
 
-#python manage.py migrate
-python manage.py runserver 0.0.0.0:8000
+python -m manage migrate
+python -m manage collectstatic --noinput
+
+python -m manage tailwind runserver --skip-checks 0.0.0.0:8000

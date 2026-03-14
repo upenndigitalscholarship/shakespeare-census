@@ -2,28 +2,20 @@
 {% load static %}
 {% block content %}
 
-<table class="play-title-icon">
+<table class="mx-auto">
     {% for row in titlerows %}
-    <tr class="play-title-icon">
+    <tr>
         {% for title in row %}
-        <td class="play-title-icon">
-            <div class="play-title-icon">
-                <div class="play-title-icon-border">
+        <td class="w-[150px] text-center align-top">
+            <div class="text-center mt-3">
+                <div class="w-[100px] h-[100px] mx-auto rounded-full border" style="border-color:#233237;">
                     <a href="{% url 'detail' title.id %}">
-                        <img class="play-title-icon" src="{% static title.icon_path %}">
+                        <img class="h-[80px] w-[80px] rounded-[20px] m-[10px]" src="{% static title.icon_path %}">
                     </a>
-		</div>
+                </div>
             </div>
-        </td>
-        {% endfor %}
-    </tr>
-    <tr class="play-title">
-        {% for title in row %}
-        <td class="play-title">
-            <div class="play-title">
-                <a class="linkbutton" href="{% url 'detail' title.id %}">
-                    {{ title.title }}
-                </a>
+            <div class="pb-5 text-center text-sm" style="font-family:'Open Sans',AppleGothic,sans-serif;">
+                <a class="p-1" style="color:#233237;" href="{% url 'detail' title.id %}">{{ title.title }}</a>
             </div>
         </td>
         {% endfor %}

@@ -1,22 +1,19 @@
 {% load static %}
-<html>
+<html lang="en">
     <head>
         {% include "census/site_head.html" %}
     </head>
     <body>
-        <div class="frame-container">
-            <div class="outer-frame">
-                <header>
-                    {% include "census/site_header.html" %}
-                </header>
+        <div class="max-w-[1024px] min-w-[526px] mx-auto relative">
+            <header>
+                {% include "census/site_header.html" %}
+            </header>
 
-                {% block content %}{% endblock content %}
+            {% block content %}{% endblock content %}
 
-                <div class="footer">
-                    {% include "census/site_footer.html" %}
-                </div>
-            </div>
+            <footer>
+                {% include "census/site_footer.html" %}
+            </footer>
         </div>
     </body>
-
 </html>

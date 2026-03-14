@@ -4,33 +4,18 @@
 {% block title %}User: {{ object.username }}{% endblock %}
 
 {% block content %}
-<div class="container">
-
-  <div class="row">
-    <div class="col-sm-12">
-
-      <h2>{{ object.username }}</h2>
-      {% if object.name %}
-        <p>{{ object.name }}</p>
-      {% endif %}
-    </div>
-  </div>
+  <h2 class="text-2xl font-light mb-2">{{ object.username }}</h2>
+  {% if object.name %}
+    <p class="text-gray-600 mb-6">{{ object.name }}</p>
+  {% endif %}
 
 {% if object == request.user %}
 <!-- Action buttons -->
-<div class="row">
-
-  <div class="col-sm-12">
-    <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">My Info</a>
-    <a class="btn btn-primary" href="{% url 'account_email' %}" role="button">E-Mail</a>
-    <!-- Your Stuff: Custom user template urls -->
-  </div>
-
+<div class="flex gap-3 mt-4">
+  <a class="px-4 py-2 bg-primary text-white rounded hover:bg-primary/80 transition-colors" href="{% url 'users:update' %}">My Info</a>
+  <a class="px-4 py-2 bg-primary text-white rounded hover:bg-primary/80 transition-colors" href="{% url 'account_email' %}">E-Mail</a>
 </div>
 <!-- End Action buttons -->
 {% endif %}
 
-
-</div>
 {% endblock content %}
-

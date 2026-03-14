@@ -3,32 +3,24 @@
 {% block content %}
 
 {% if not user.is_staff %}
-<p>Please sign in as administrator to view this page or do anything</p>
+<p class="guide-text">Please sign in as administrator to view this page or do anything</p>
 {% else %}
-<div>
-    <script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
-    <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
-    <link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
+<script type="text/javascript" src="{% static 'census/js/modal.js' %}"></script>
+<script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+<div id="copyModal" class="modal" role="dialog"></div>
 
-    <div id="copyModal" class="modal fade" role="dialog"></div>
-</div>
+<div class="max-w-3xl mx-auto">
+    <hr class="my-4 w-1/2 mx-auto">
+    <p class="guide-text">Here is a list of the copies librarians have edited.</p>
+    <p class="guide-text">Please check the details and verify the information.</p>
+    <hr class="my-4 w-1/2 mx-auto">
 
-<div class="container">
-    <hr class = "style14" width = "50%"></hr>
-    <p class="guide-text">
-        Here is a list of the copies librarians have edited.
-    </p>
-    <p class="guide-text">
-        Please check the details and verify the information.
-    </p>
-    <hr class="style14" width = "50%"></hr>
-
-    <table class="table table-striped" align="center" style="width:70%">
+    <table class="play-detail-set mx-auto" style="width:70%;">
         <tbody>
             {% if copies %}
                 <tr>
-                  <th>Copy</th>
-                  <th></th>
+                    <th>Copy</th>
+                    <th></th>
                 </tr>
                 {% for copy in copies %}
                     <tr id="copy-record-{{ copy.id }}">
@@ -37,10 +29,10 @@
                             STC/Wing: {{ copy.issue.stc_wing }}
                         </td>
                         <td>
-			    <a class="copy_data button-inline" id="original-details-{{ copy.id }}" href="#" data-form="{% url 'copy_data' copy.parent.id %}" title="Details">Original Version</a>
+                            <a class="copy_data button-inline" id="original-details-{{ copy.id }}" href="#" data-form="{% url 'copy_data' copy.parent.id %}" title="Details">Original Version</a>
                         </td>
                         <td>
-			    <a class="copy_data button-inline" id="new-draft-details-{{ copy.id }}" href="#" data-form="{% url 'draft_copy_data' copy.id %}" title="Details">New Version</a>
+                            <a class="copy_data button-inline" id="new-draft-details-{{ copy.id }}" href="#" data-form="{% url 'draft_copy_data' copy.id %}" title="Details">New Version</a>
                         </td>
                         <td>
                             <button class="button-inline" id="accept-{{ copy.id }}" onclick="accept({{ copy.id }});">Accept</button>
@@ -57,32 +49,24 @@
 
 <script>
 function accept(copy_id) {
-    $.ajax({
-        type: "GET",
-        url: "admin_verify_single_edit_accept/",
-        data: {
-            copy_id: copy_id
-        },
-    }).done(function() {
-        $('#accept-' + copy_id).addClass('button-inline-selected');
-        $('#reject-' + copy_id).removeClass('button-inline-selected');
-	$('original-details-' + copy_id).addClass('hidden');
-	$('new-draft-details-' + copy_id).addClass('hidden');
-    });
+    fetch("admin_verify_single_edit_accept/?copy_id=" + copy_id)
+        .then(function(response) { return response.json(); })
+        .then(function() {
+            document.getElementById('accept-' + copy_id).classList.add('button-inline-selected');
+            document.getElementById('reject-' + copy_id).classList.remove('button-inline-selected');
+            document.getElementById('original-details-' + copy_id).classList.add('hidden');
+            document.getElementById('new-draft-details-' + copy_id).classList.add('hidden');
+        });
 }
 function reject(copy_id) {
-    $.ajax({
-        type: "GET",
-        url: "admin_verify_single_edit_reject/",
-        data: {
-            copy_id: copy_id
-        },
-    }).done(function() {
-        $('#accept-' + copy_id).removeClass('button-inline-selected');
-        $('#reject-' + copy_id).addClass('button-inline-selected');
-	$('original-details-' + copy_id).addClass('hidden');
-	$('new-draft-details-' + copy_id).addClass('hidden');
-    });
+    fetch("admin_verify_single_edit_reject/?copy_id=" + copy_id)
+        .then(function(response) { return response.json(); })
+        .then(function() {
+            document.getElementById('accept-' + copy_id).classList.remove('button-inline-selected');
+            document.getElementById('reject-' + copy_id).classList.add('button-inline-selected');
+            document.getElementById('original-details-' + copy_id).classList.add('hidden');
+            document.getElementById('new-draft-details-' + copy_id).classList.add('hidden');
+        });
 }
 </script>
 {% endif %}

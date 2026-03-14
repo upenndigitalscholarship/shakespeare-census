@@ -1,66 +1,40 @@
 {% load static %}
 
-<div class="tucked">
-    {% if user.is_staff %}
+{% if user.is_staff %}
+<div class="text-right text-sm py-1 pr-2">
     <a class="button" href="{% url 'admin_start' %}">Site Administration</a>
+</div>
+{% endif %}
+
+<div class="text-center mt-10 mb-5">
+    {% if request.path == '/homepage' %}
+        <span class="font-light text-2xl tracking-wide">Shakespeare Census</span>
+    {% else %}
+        <a href="{% url 'homepage' %}" class="font-light text-2xl tracking-wide" style="color:#233237;">Shakespeare Census</a>
     {% endif %}
 </div>
-<table class="title">
-    <tr>
-        <th>
-            &nbsp;
-        </th>
-        <th>
-            &nbsp;
-        </th>
-        <th>
-            &nbsp;
-        </th>
-        <th>
-            &nbsp;
-        </th>
-   </tr>
-    <tr>
-        <td colspan="4">
-          {% if request.path == '/homepage' %}
-            <a>Shakespeare Census</a>
-          {% else %}
-            <a href="{% url 'homepage' %}">Shakespeare Census</a><br/>
-          {% endif %}
-        </td>
-    </tr>
-</table>
 
-<table class="header-title-nav">
-   <tr>
-     <th>
-       <a href="{% url 'about' %}">about</a>
-     </th>
-     <th>
-       <a href="#search" id="site-search-button">search</a>
-     </th>
-   </tr>
-</table>
+<nav class="text-center text-sm mb-2">
+    <a href="{% url 'about' %}" class="px-2.5" style="color:#233237;">about</a>
+    <a href="#search" id="site-search-button" class="px-2.5 cursor-pointer" style="color:#233237;">search</a>
+</nav>
 
-<div class="search-bar">
-  <form id="search-bar-form" class="hidden" action="/search/" method="get">
-    <select name="field">
-      <option disabled selected value>Search by...</option>
-      <option value="location">Location</option>
-      <option value="year">Year</option>
-      <option value="stc">STC / Wing #</option>
-      <option value="bartlett">Bartlett #</option>
-    </select>
-    <input type="text" name="value" placeholder="Search..">
-    <input type="submit" value="Submit" >
-  </form>
+<div class="text-center min-h-8 pb-4">
+    <form id="search-bar-form" class="hidden mb-0" action="/search/" method="get">
+        <select name="field">
+            <option disabled selected value>Search by...</option>
+            <option value="location">Location</option>
+            <option value="year">Year</option>
+            <option value="stc">STC / Wing #</option>
+            <option value="bartlett">Bartlett #</option>
+        </select>
+        <input type="text" name="value" placeholder="Search..">
+        <input type="submit" value="Submit">
+    </form>
 </div>
 
 <script>
     utils.get.id('site-search-button').addEventListener('click', function () {
         utils.togglehide.id('search-bar-form');
     });
-    // if (window.location.hash && window.location.hash === '#search') {
-    //    utils.get.id('search-bar-form').classList.remove('hidden');
-    // }
 </script>

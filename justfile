@@ -46,11 +46,11 @@ bootstrap:
 
 # Open an interactive shell in the utility container for debugging and manual commands
 @console:
-    docker compose run --rm utility sh
+    docker compose run --rm utility bash
 
 # Open an interactive shell in the utility container for debugging and manual commands
 @db-console:
-    docker compose exec -it db sh 
+    docker compose exec -it db sh
 
 # Run pre-commit hooks on all files to check code quality and formatting
 @lint:

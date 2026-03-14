@@ -312,6 +312,6 @@ structlog.configure(
 #############################################################################
 # Tailwind CLI Settings
 #############################################################################
-TAILWIND_CLI_AUTOMATIC_DOWNLOAD = False
+TAILWIND_CLI_AUTOMATIC_DOWNLOAD = True
 TAILWIND_CLI_DIST_CSS = "css/tailwind.min.css"
-TAILWIND_CLI_SRC_CSS = "css/input.css"
+TAILWIND_CLI_SRC_CSS = "static/css/input.css"

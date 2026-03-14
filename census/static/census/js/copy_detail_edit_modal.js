@@ -1,18 +1,31 @@
-jQuery(function($) {
-    $(document).ready(function() {
-        $(".copy_data").unbind('click');
-        $(".copy_data").click(function(ev) {
+/**
+ * Copy detail edit modal - vanilla JS
+ * Handles loading copy details into a modal
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    const copyDataLinks = document.querySelectorAll('.copy_data');
+
+    copyDataLinks.forEach(function(link) {
+        link.addEventListener('click', function(ev) {
             ev.preventDefault();
-            var url=$(this).data("form");
-            $("#copyModal").load(url, function() {
-                $("#copyModal").modal('show');
-                $(document).click(function(event) {
-                    if (! $(event.target).closest(".modal-dialog").length) {
-                    	$("#copyModal").modal('hide');
-                    }
-                });
+            const url = this.getAttribute('data-form');
+
+            Modal.loadAndShow(url, 'copyModal').then(function() {
+                // Close modal when clicking outside the dialog
+                document.addEventListener('click', handleOutsideClick);
             });
+
             return false;
         });
     });
 });
+
+function handleOutsideClick(event) {
+    const modalDialog = document.querySelector('.modal-dialog');
+    const copyModal = document.getElementById('copyModal');
+
+    if (copyModal && modalDialog && !modalDialog.contains(event.target)) {
+        Modal.hide('copyModal');
+        document.removeEventListener('click', handleOutsideClick);
+    }
+}

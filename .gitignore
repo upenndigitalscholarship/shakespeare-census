@@ -5,6 +5,8 @@ attic/
 .env 
 
 ### Python template
+.django_tailwind_cli/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

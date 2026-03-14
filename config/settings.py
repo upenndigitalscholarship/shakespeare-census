@@ -40,10 +40,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Security Settings
 #############################################################################
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env(
-    "DJANGO_SECRET_KEY",
-    default="lXdzU4yiyXNeLn4JnY14rb8T4EPYyORYNkJuLH7Ml8ilH4NnjYWqqV8E84j5McH8",
-)
+SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 # Hosts
 host_list = env.list(

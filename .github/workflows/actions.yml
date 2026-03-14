@@ -58,7 +58,6 @@ jobs:
       - name: Test with pytest
         env:
           DATABASE_URL: 'postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres'
-          SECRET_KEY: 'for-testing-only'
           DJANGO_SECRET_KEY: 'for-testing-only'
         run: |
           python -m pytest
@@ -109,6 +108,8 @@ jobs:
           password: ${{ secrets.REVSYS_DOCKER_REGISTRY_PASSWORD }}
 
       - name: Build Docker image
+        env:
+          DJANGO_SECRET_KEY: 'for-testing-only'
         run: |
           TAG=`vinnie version`
 

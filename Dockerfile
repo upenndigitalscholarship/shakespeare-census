@@ -52,8 +52,8 @@ COPY . /code/
 WORKDIR /code
 
 # Tailwind download
-RUN DATABASE_URL=sqlite://:memory: SECRET_KEY=nope-nope-nope python -m manage tailwind --skip-checks download_cli
-RUN DATABASE_URL=sqlite://:memory: SECRET_KEY=nope-nope-nope python -m manage tailwind --skip-checks build
+RUN DATABASE_URL=sqlite://:memory: DJANGO_SECRET_KEY=nope-nope-nope python -m manage tailwind --skip-checks download_cli
+RUN DATABASE_URL=sqlite://:memory: DJANGO_SECRET_KEY=nope-nope-nope python -m manage tailwind --skip-checks build
 
 CMD ["gunicorn", "-c", "/code/gunicorn.conf.py", "config.wsgi"]
 

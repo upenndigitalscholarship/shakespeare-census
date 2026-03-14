@@ -59,6 +59,7 @@ jobs:
         env:
           DATABASE_URL: 'postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres'
           SECRET_KEY: 'for-testing-only'
+          DJANGO_SECRET_KEY: 'for-testing-only'
         run: |
           python -m pytest
 

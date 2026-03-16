@@ -138,24 +138,6 @@ AUTH_USER_MODEL = "users.User"
 LOGIN_REDIRECT_URL = "users:redirect"
 LOGIN_URL = "account_login"
 
-# Passwords
-# PASSWORD_HASHERS = [
-#     "django.contrib.auth.hashers.Argon2PasswordHasher",
-#     "django.contrib.auth.hashers.PBKDF2PasswordHasher",
-#     "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
-#     "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
-#     "django.contrib.auth.hashers.BCryptPasswordHasher",
-# ]
-
-# AUTH_PASSWORD_VALIDATORS = [
-#     {
-#         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
-#     },
-#     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
-#     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
-#     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
-# ]
-
 #############################################################################
 # Database
 #############################################################################

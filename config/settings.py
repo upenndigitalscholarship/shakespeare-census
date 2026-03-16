@@ -46,8 +46,14 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 host_list = env.list(
     "DJANGO_ALLOWED_HOSTS", default=["localhost", "0.0.0.0", "127.0.0.1"]
 )
+
 ALLOWED_HOSTS = [el.strip() for el in host_list]
-CSRF_TRUSTED_ORIGINS = [el.strip() for el in host_list]
+
+SCHEME = "https"
+if LOCAL_DEVELOPMENT:
+    SCHEME = "http"
+
+CSRF_TRUSTED_ORIGINS = [f"{SCHEME}://{el.strip()}" for el in host_list]
 
 # Site ID
 SITE_ID = 1

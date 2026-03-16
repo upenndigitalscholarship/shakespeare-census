@@ -240,12 +240,12 @@ class RejectedDraftCopy(BaseCopy):
 
 
 class ProvenanceName(models.Model):
-    name = models.CharField(max_length=255, null=True, blank=True)
-    bio = models.CharField(max_length=255, null=True, blank=True)
-    viaf = models.CharField(max_length=255, null=True, blank=True)
-    start_century = models.CharField(max_length=255, null=True, blank=True)
-    end_century = models.CharField(max_length=255, null=True, blank=True)
-    gender = models.CharField(max_length=255, null=True, blank=True)
+    name = models.TextField(null=True, blank=True)
+    bio = models.TextField(null=True, blank=True)
+    viaf = models.TextField(null=True, blank=True)
+    start_century = models.TextField(null=True, blank=True)
+    end_century = models.TextField(null=True, blank=True)
+    gender = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.name or ""

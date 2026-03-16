@@ -153,7 +153,7 @@ except (ImproperlyConfigured, environs.EnvError):
             "PORT": env.int("PGPORT", default=5432),
             "USER": env("PGUSER"),
             "CONN_MAX_AGE": 0,
-            "OPTIONS": {"MAX_CONNS": 25},
+            "OPTIONS": {"MAX_CONNS": 10},
         }
     }
 
@@ -182,8 +182,8 @@ USE_TZ = True
 # Static files
 #############################################################################
 STATIC_URL = "/static/"
-STATIC_ROOT = str(BASE_DIR / "staticfiles")
-STATICFILES_DIRS = [str(BASE_DIR / "static")]
+STATIC_ROOT = BASE_DIR.joinpath("deployed_static").as_posix()
+STATICFILES_DIRS = [BASE_DIR.joinpath("static").as_posix()]
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",

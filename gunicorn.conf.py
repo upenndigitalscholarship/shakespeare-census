@@ -5,7 +5,7 @@ import os
 BASE_DIR = os.environ.get("H", "/code")
 
 errorlog = "-"
-bind = "0.0.0.0:8000"
+bind = "unix:/run/gunicorn.sock"
 log_level = "INFO"
 workers = 1
 worker_tmp_dir = "/dev/shm"

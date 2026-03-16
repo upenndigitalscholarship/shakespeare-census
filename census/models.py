@@ -138,7 +138,7 @@ class BaseCopy(models.Model):
     width = models.FloatField(default=0, null=True)
     marginalia = models.TextField(null=True, blank=True, default=None)
     condition = models.CharField(max_length=500, default=None, null=True, blank=True)
-    binding = models.CharField(max_length=500, default=None, null=True, blank=True)
+    binding = models.TextField(default=None, null=True, blank=True)
     binder = models.CharField(max_length=500, default=None, null=True, blank=True)
     bookplate = models.CharField(max_length=500, default=None, null=True, blank=True)
     bookplate_location = models.CharField(

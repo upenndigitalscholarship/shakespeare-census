@@ -1,4 +1,6 @@
-# Manual migration to rename additional fields to lowercase
+# Manual migration to rename manually-added fields to lowercase in production
+# These fields were never tracked in Django with uppercase names, so no state_operations needed
+# Migration 0025 adds them properly as new lowercase fields
 
 from django.db import migrations
 

@@ -47,6 +47,7 @@ host_list = env.list(
     "DJANGO_ALLOWED_HOSTS", default=["localhost", "0.0.0.0", "127.0.0.1"]
 )
 ALLOWED_HOSTS = [el.strip() for el in host_list]
+CSRF_TRUSTED_ORIGINS = [el.strip() for el in host_list]
 
 # Site ID
 SITE_ID = 1

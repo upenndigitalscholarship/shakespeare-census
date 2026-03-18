@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from datetime import datetime
+from string import Formatter
 
 
 ## UTILITY FUNCTIONS ##
@@ -318,17 +319,70 @@ def homepage(request):
     return HttpResponse(template.render(context, request))
 
 
+def safe_format(strng, val_dict):
+    """
+    Call the `format` method of the given template string, passing val_dict
+    as the values. But rather than throwing an error when no value is
+    supplied for a named field, leave the given field unchanged. All fields
+    in the template string must be named fields.
+    """
+    val_dict = dict(val_dict)  # Will be modified, so make a copy
+
+    names = [
+        field
+        for literal, field, format_spec, conv in Formatter().parse(strng)
+        if field is not None
+    ]
+    for n in names:
+        if n not in val_dict:
+            val_dict[n] = "{" + n + "}"
+
+    return strng.format(**val_dict)
+
+
 def about(request, viewname="about"):
     template = loader.get_template("census/about.html")
-    copy_count = str(models.CanonicalCopy.objects.count())
+
+    copy_count = models.CanonicalCopy.objects.exclude(
+        issue__edition__title__hidden=True
+    ).count()
+    frag_count = models.CanonicalCopy.objects.filter(fragment=True).count()
+    facsimile_copy_count = models.CanonicalCopy.objects.filter(
+        ~Q(digital_facsimile_url=None) & ~Q(digital_facsimile_url="")
+    ).count()
+    facsimile_copy_percent = round(100 * facsimile_copy_count / copy_count)
+
+    verified_copy_count = (
+        models.CanonicalCopy.objects.exclude(issue__edition__title__hidden=True)
+        .filter(location_verified=True)
+        .count()
+    )
+    unverified_copy_count = (
+        models.CanonicalCopy.objects.exclude(issue__edition__title__hidden=True)
+        .filter(location_verified=False)
+        .count()
+    )
+
+    pre_render_context = {
+        "copy_count": str(copy_count - frag_count),
+        "frag_count": str(frag_count),
+        "verified_copy_count": str(verified_copy_count),
+        "unverified_copy_count": str(unverified_copy_count),
+        "current_date": f"{datetime.now():%d %B %Y}",
+        "facsimile_copy_count": str(facsimile_copy_count),
+        "facsimile_copy_percent": f"{facsimile_copy_percent}%",
+        "estc_copy_count": str(
+            models.CanonicalCopy.objects.filter(from_estc=True).count()
+        ),
+        "non_estc_copy_count": str(
+            models.CanonicalCopy.objects.filter(from_estc=False).count()
+        ),
+    }
     content = [
-        (
-            s.content.replace("{copy_count}", copy_count).replace(
-                "{current_date}", f"{datetime.now():%d %B %Y}"
-            )
-        )
+        safe_format(s.content, pre_render_context)
         for s in models.StaticPageText.objects.filter(viewname=viewname)
     ]
+
     context = {
         "content": content,
     }

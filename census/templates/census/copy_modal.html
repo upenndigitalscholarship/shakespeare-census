@@ -1,7 +1,21 @@
 <div class="modal-dialog bg-white rounded-lg shadow-xl max-w-2xl mx-auto my-8 relative">
     <div class="modal-content">
         <div class="modal-header px-6 py-4 rounded-t-lg border-b border-gray-200" style="background-color:rgba(152,75,67,0.3);">
-            <h3 class="modal-title text-left text-lg font-light m-0">Copy Details for {{ copy.issue.edition.title }} ({{ copy.issue.year }})</h3>
+            <h3 class="modal-title text-left text-lg font-light m-0">
+                Copy Details for {{ copy.issue.edition.title }} ({{ copy.issue.year }})
+                {% if copy.digital_facsimile_url %}
+                    <span class="unicode-icon ml-2" title="Link to digital facsimile of this copy">
+                        <a href="{{ copy.digital_facsimile_url }}" target="_blank">
+                            <i class="fas fa-camera-retro"></i>
+                        </a>
+                    </span>
+                {% endif %}
+                {% if copy.fragment %}
+                    <span class="unicode-icon ml-2" title="This copy is a fragment">
+                        <i class="fas fa-industry"></i>
+                    </span>
+                {% endif %}
+            </h3>
         </div>
         <div class="modal-body p-6 max-h-[70vh] overflow-y-auto">
             <p class="text-left mb-2"><strong>SC #</strong>: {% if copy.nsc and copy.nsc != '0' %}{{ copy.nsc }}{% endif %}</p>
@@ -15,19 +29,28 @@
             {% endif %}
 
             {% if copy.local_notes %}
-                <p class="text-left mb-2"><strong>Copy-specific notes</strong>: {{ copy.local_notes}}</p>
+                <p class="text-left mb-2"><strong>Copy-specific notes</strong>: {{ copy.local_notes }}</p>
+            {% endif %}
+
+            {% if copy.provenance_search_names.all %}
+                <p class="text-left mb-2"><strong>Provenance</strong>:
+                    {% for owner in copy.provenance_search_names.all|dictsort:"name" %}
+                        <a href="https://viaf.org/viaf/{{ owner.viaf }}" target="_blank" title="{{ owner.bio }}">
+                            {{ owner.name }}</a>{% if not forloop.last %}; {% endif %}
+                    {% endfor %}
+                </p>
             {% endif %}
 
             {% if copy.prov_info %}
-                <p class="text-left mb-2"><strong>Provenance</strong>: {{ copy.prov_info}}</p>
+                <p class="text-left mb-2"><strong>Provenance notes</strong>: {{ copy.prov_info }}</p>
             {% endif %}
 
             {% if copy.height %}
-                <p class="text-left mb-2"><strong>Height</strong>: {{ copy.height }} cm</p>
+                <p class="text-left mb-2"><strong>Leaf Height</strong>: {{ copy.height }} cm</p>
             {% endif %}
 
             {% if copy.width %}
-                <p class="text-left mb-2"><strong>Width</strong>: {{ copy.width }} cm</p>
+                <p class="text-left mb-2"><strong>Leaf Width</strong>: {{ copy.width }} cm</p>
             {% endif %}
 
             {% if copy.marginalia %}
@@ -38,12 +61,20 @@
                 <p class="text-left mb-2"><strong>Condition</strong>: {{ copy.condition }}</p>
             {% endif %}
 
-            {% if copy.rasmussen_west %}
-                <p class="text-left mb-2"><strong>Rasmussen #:</strong>: {{ copy.rasmussen_west }}</p>
-
+            {% if copy.lee %}
+                <p class="text-left mb-2"><strong>Lee #</strong>: {{ copy.lee }}</p>
             {% endif %}
+
+            {% if copy.lee_notes %}
+                <p class="text-left mb-2"><strong>Lee notes</strong>: {{ copy.lee_notes }}</p>
+            {% endif %}
+
+            {% if copy.rasmussen_west %}
+                <p class="text-left mb-2"><strong>Rasmussen & West #</strong>: {{ copy.rasmussen_west }}</p>
+            {% endif %}
+
             {% if copy.rasmussen_west_notes %}
-                <p class="text-left mb-2"><strong>Rasmussen Notes:</strong>: {{ copy.rasmussen_west_notes }}</p>
+                <p class="text-left mb-2"><strong>Rasmussen & West notes</strong>: {{ copy.rasmussen_west_notes }}</p>
             {% endif %}
 
             {% if copy.binding %}
@@ -62,10 +93,6 @@
                 <p class="text-left mb-2"><strong>Bookplate location</strong>: {{ copy.bookplate_location }}</p>
             {% endif %}
 
-            {% if copy.lee_notes %}
-                <p class="text-left mb-2"><strong>Lee notes</strong>: {{ copy.lee_notes }}</p>
-            {% endif %}
-
             {% if copy.bibliography %}
                 <p class="text-left mb-2"><strong>For scholarship on this copy, see</strong>: {{ copy.bibliography }}</p>
             {% endif %}
@@ -74,12 +101,16 @@
                 <p class="text-left mb-2"><strong>Bartlett 1939 #</strong>: {{ copy.bartlett1939 }}</p>
             {% endif %}
 
-            {% if copy.bartlett1916 %}
-                <p class="text-left mb-2"><strong>Bartlett 1916 #</strong>: {{ copy.bartlett1916 }}</p>
-            {% endif %}
-
             {% if copy.bartlett1939_notes %}
                 <p class="text-left mb-2"><strong>Bartlett 1939 notes</strong>: {{ copy.bartlett1939_notes }}</p>
+            {% endif %}
+
+            {% if copy.bartlett_ms_annotations %}
+                <p class="text-left mb-2"><strong>Bartlett MS Annotations</strong>: {{ copy.bartlett_ms_annotations }}</p>
+            {% endif %}
+
+            {% if copy.bartlett1916 %}
+                <p class="text-left mb-2"><strong>Bartlett 1916 #</strong>: {{ copy.bartlett1916 }}</p>
             {% endif %}
 
             {% if copy.bartlett1916_notes %}

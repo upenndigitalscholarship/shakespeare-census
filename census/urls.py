@@ -71,4 +71,25 @@ urlpatterns = [
         views.autofill_collection,
         name="autofill_collection_query",
     ),
+    # Data export
+    path(
+        "location_copy_count_csv_export/",
+        views.location_copy_count_csv_export,
+        name="location_copy_count_csv_export",
+    ),
+    path(
+        "year_issue_copy_count_csv_export/",
+        views.year_issue_copy_count_csv_export,
+        name="year_issue_copy_count_csv_export",
+    ),
+    path(
+        "copy_sc_bartlett_csv_export/",
+        views.copy_sc_bartlett_csv_export,
+        name="copy_sc_bartlett_csv_export",
+    ),
+    re_path(
+        r"^export/(?P<groupby>[A-Za-z0-9_]{1,50})/(?P<column>[A-Za-z0-9_]{1,50})/(?P<aggregate>[A-Za-z0-9_]{1,50})/$",
+        views.export,
+        name="export",
+    ),
 ]

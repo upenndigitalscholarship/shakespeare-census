@@ -4,6 +4,9 @@ attic/
 .local_env
 .env
 
+# Local static files deploy location
+deployed_static/
+
 ### Python template
 .django_tailwind_cli/
 .playwright_cache/

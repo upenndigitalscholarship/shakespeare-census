@@ -3,12 +3,13 @@ from django.template import loader
 from . import models
 from . import forms
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Q, Count, Sum
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from datetime import datetime
 from string import Formatter
+import csv
 
 
 ## UTILITY FUNCTIONS ##
@@ -815,3 +816,103 @@ def contact(request):
     ]
     context = {"content": content}
     return HttpResponse(template.render(context, request))
+
+
+## DATA EXPORT VIEWS ##
+
+
+def location_copy_count_csv_export(request):
+    locations = models.CanonicalCopy.objects.all().values("location")
+    locations = locations.annotate(total=Count("location")).order_by("location__name")
+
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = (
+        'attachment; filename="shakespeare_census_location_copy_count.csv"'
+    )
+
+    writer = csv.writer(response)
+    writer.writerow(["Location", "Number of Copies"])
+    for loc in locations:
+        writer.writerow(
+            [models.Location.objects.get(pk=loc["location"]).name, loc["total"]]
+        )
+
+    return response
+
+
+def year_issue_copy_count_csv_export(request):
+    issues = models.CanonicalCopy.objects.exclude(
+        issue__edition__title__hidden=True
+    ).values("issue")
+    issues = issues.annotate(total=Count("issue")).order_by("issue__start_date")
+
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = (
+        'attachment; filename="shakespeare_census_year_issue_copy_count.csv"'
+    )
+
+    writer = csv.writer(response)
+    writer.writerow(["Year", "STC/Wing", "Title", "Number of Copies"])
+    for iss in issues:
+        iss_obj = models.Issue.objects.get(pk=iss["issue"])
+        writer.writerow(
+            [
+                iss_obj.start_date,
+                iss_obj.stc_wing,
+                iss_obj.edition.title.title,
+                iss["total"],
+            ]
+        )
+
+    return response
+
+
+def copy_sc_bartlett_csv_export(request):
+    copies = models.CanonicalCopy.objects.exclude(issue__edition__title__hidden=True)
+    copies = copies.exclude(bartlett1939=0, bartlett1916=0)
+
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = (
+        'attachment; filename="shakespeare_census_sc_bartlett.csv"'
+    )
+
+    writer = csv.writer(response)
+    writer.writerow(["SC #", "Bartlett 1939 #", "Bartlett 1916 #", "Title", "Year"])
+    for copy in copies:
+        writer.writerow(
+            [
+                copy.nsc,
+                copy.bartlett1939,
+                copy.bartlett1916,
+                copy.issue.edition.title.title,
+                copy.issue.start_date,
+            ]
+        )
+
+    return response
+
+
+def export(request, groupby, column, aggregate):
+    agg_model = Sum if aggregate == "sum" else Count
+    try:
+        groups = models.CanonicalCopy.objects.all().values(groupby)
+    except Exception:
+        raise Http404("Invalid groupby column.")
+
+    try:
+        rows = groups.annotate(agg=agg_model(column)).order_by(groupby)
+    except Exception:
+        raise Http404("Invalid aggregation column.")
+
+    filename = "shakespeare_census_{}_of_{}_for_each_{}.csv"
+    filename = filename.format(aggregate, column, groupby)
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+
+    writer = csv.writer(response)
+    writer.writerow([groupby, f"{aggregate} of {column}"])
+
+    for row in rows:
+        writer.writerow([row[groupby], row["agg"]])
+
+    return response

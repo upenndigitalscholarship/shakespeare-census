@@ -40,8 +40,12 @@
             {% if copy.provenance_search_names.all %}
                 <p class="text-left mb-2"><strong>Provenance</strong>:
                     {% for owner in copy.provenance_search_names.all|dictsort:"name" %}
-                        <a href="https://viaf.org/viaf/{{ owner.viaf }}" target="_blank" title="{{ owner.bio }}">
-                            {{ owner.name }}</a>{% if not forloop.last %}; {% endif %}
+                        {% if owner.viaf %}
+                            <a href="https://viaf.org/viaf/{{ owner.viaf }}" target="_blank" title="{{ owner.bio }}">{{ owner.name }}</a>
+                        {% else %}
+                            <span title="{{ owner.bio }}">{{ owner.name }}</span>
+                        {% endif %}
+                        {% if not forloop.last %}; {% endif %}
                     {% endfor %}
                 </p>
             {% endif %}

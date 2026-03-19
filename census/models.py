@@ -172,6 +172,12 @@ class FalseCopy(BaseCopy):
 # Copy records that we are treating as accurate. These records *must*
 # be preserved across versions of the app.
 class CanonicalCopy(BaseCopy):
+    provenance_search_names = models.ManyToManyField(
+        "ProvenanceName",
+        through="ProvenanceOwnership",
+        through_fields=("copy", "owner"),
+    )
+
     class Meta:
         verbose_name_plural = "Canonical copies"
 

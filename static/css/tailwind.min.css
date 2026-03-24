@@ -32,8 +32,6 @@
     --container-6xl: 72rem;
     --text-sm: 0.875rem;
     --text-sm--line-height: calc(1.25 / 0.875);
-    --text-base: 1rem;
-    --text-base--line-height: calc(1.5 / 1);
     --text-lg: 1.125rem;
     --text-lg--line-height: calc(1.75 / 1.125);
     --text-xl: 1.25rem;
@@ -264,9 +262,6 @@
   }
   .mt-1 {
     margin-top: calc(var(--spacing) * 1);
-  }
-  .mt-2 {
-    margin-top: calc(var(--spacing) * 2);
   }
   .mt-3 {
     margin-top: calc(var(--spacing) * 3);
@@ -937,6 +932,10 @@
   .static-text a:link, .static-text a:visited, .static-text a:hover, .guide-text a:link, .guide-text a:visited, .guide-text a:hover {
     color: rgba(152, 75, 67, 1);
     font-weight: bold;
+  }
+  .static-text svg {
+    display: inline;
+    vertical-align: middle;
   }
   span.citation {
     width: 90%;

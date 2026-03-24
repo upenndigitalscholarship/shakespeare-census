@@ -248,6 +248,11 @@
     font-weight: bold;
   }
 
+  .static-text svg {
+    display: inline;
+    vertical-align: middle;
+  }
+
   span.citation {
     width: 90%;
     margin-left: auto;

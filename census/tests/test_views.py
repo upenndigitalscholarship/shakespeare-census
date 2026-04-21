@@ -58,6 +58,24 @@ class TestCopyView:
 
 
 @pytest.mark.django_db
+class TestCopyByScView:
+    def test_copy_by_sc_returns_200(self, client, census_data):
+        url = reverse("copy_by_sc", kwargs={"nsc": census_data["copy"].nsc})
+        response = client.get(url)
+        assert response.status_code == 200
+
+    def test_copy_by_sc_not_found(self, client, census_data):
+        url = reverse("copy_by_sc", kwargs={"nsc": "9999"})
+        response = client.get(url)
+        assert response.status_code == 404
+
+    def test_copy_by_sc_in_context(self, client, census_data):
+        url = reverse("copy_by_sc", kwargs={"nsc": census_data["copy"].nsc})
+        response = client.get(url)
+        assert response.context["copy"] == census_data["copy"]
+
+
+@pytest.mark.django_db
 class TestSearch:
     def test_search_by_stc_returns_200(self, client, census_data):
         response = client.get("/search/", {"field": "stc", "value": "STC 22273"})

@@ -440,6 +440,29 @@ def copy(request, id):
     return HttpResponse(template.render(context, request))
 
 
+def copy_by_sc(request, nsc):
+    try:
+        copy = models.CanonicalCopy.objects.get(nsc=nsc)
+    except models.CanonicalCopy.DoesNotExist:
+        raise Http404("Copy not found")
+    selected_issue = copy.issue
+    title = selected_issue.edition.title
+    all_copies = [copy]
+    copy_count = 0 if copy.fragment else 1
+    fragment_count = 1 if copy.fragment else 0
+    template = loader.get_template("census/copy_by_sc.html")
+    context = {
+        "copy": copy,
+        "selected_issue": selected_issue,
+        "title": title,
+        "icon_path": get_icon_path(title.id),
+        "all_copies": all_copies,
+        "copy_count": copy_count,
+        "fragment_count": fragment_count,
+    }
+    return HttpResponse(template.render(context, request))
+
+
 def draft_copy_data(request, copy_id):
     template = loader.get_template("census/copy_modal.html")
     selected_copy = models.CanonicalCopy.objects.filter(pk=copy_id)

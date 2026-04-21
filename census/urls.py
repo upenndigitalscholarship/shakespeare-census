@@ -11,6 +11,7 @@ urlpatterns = [
     path("editions/<int:id>/", views.detail, name="detail"),
     path("about/", views.about, name="about"),
     re_path(r"^about/(?P<viewname>[A-Za-z0-9]+)/$", views.about, name="about"),
+    path("sc/<str:nsc>/", views.copy_by_sc, name="copy_by_sc"),
     path("copy/<int:id>/", views.copy, name="copy"),
     path("copydata/<int:copy_id>/", views.copy_data, name="copy_data"),
     path("draftcopydata/<int:copy_id>/", views.draft_copy_data, name="draft_copy_data"),

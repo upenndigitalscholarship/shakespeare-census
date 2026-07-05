@@ -14,6 +14,7 @@ urlpatterns = [
     path("sc/<str:nsc>/", views.copy_by_sc, name="copy_by_sc"),
     path("copy/<int:id>/", views.copy, name="copy"),
     path("copydata/<int:copy_id>/", views.copy_data, name="copy_data"),
+    path("falsecopydata/<int:copy_id>/", views.false_copy_data, name="false_copy_data"),
     path("draftcopydata/<int:copy_id>/", views.draft_copy_data, name="draft_copy_data"),
     path("add_copy/<int:id>/", views.add_copy, name="add_copy"),
     path("contact/", views.contact, name="contact"),

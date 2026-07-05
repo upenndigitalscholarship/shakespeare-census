@@ -49,10 +49,19 @@ def census_data(db):
         location_verified=True,
     )
 
+    false_copy = baker.make(
+        "census.FalseCopy",
+        issue=issue,
+        location=location,
+        shelfmark="Ghost shelfmark",
+        local_notes="[This is a ghost record]",
+    )
+
     return {
         "location": location,
         "title": title,
         "edition": edition,
         "issue": issue,
         "copy": copy,
+        "false_copy": false_copy,
     }

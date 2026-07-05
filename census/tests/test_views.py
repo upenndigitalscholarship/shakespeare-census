@@ -101,6 +101,36 @@ class TestSearch:
         response = client.get("/search/")
         assert response.status_code == 200
 
+    def test_search_ghosts_returns_200(self, client, census_data):
+        response = client.get("/search/", {"field": "ghosts"})
+        assert response.status_code == 200
+
+    def test_search_ghosts_finds_false_copy(self, client, census_data):
+        response = client.get("/search/", {"field": "ghosts"})
+        assert census_data["false_copy"] in response.context["result_list"]
+
+
+@pytest.mark.django_db
+class TestFalseCopyData:
+    def test_false_copy_data_returns_200(self, client, census_data):
+        url = reverse(
+            "false_copy_data", kwargs={"copy_id": census_data["false_copy"].pk}
+        )
+        response = client.get(url)
+        assert response.status_code == 200
+
+    def test_false_copy_data_shows_ghost_notes(self, client, census_data):
+        url = reverse(
+            "false_copy_data", kwargs={"copy_id": census_data["false_copy"].pk}
+        )
+        response = client.get(url)
+        assert census_data["false_copy"].local_notes in response.content.decode()
+
+    def test_false_copy_data_not_found(self, client, census_data):
+        url = reverse("false_copy_data", kwargs={"copy_id": 99999})
+        response = client.get(url)
+        assert response.status_code == 404
+
 
 @pytest.mark.django_db
 class TestLocationCopyCountCsvExport:

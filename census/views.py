@@ -1,5 +1,6 @@
 from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
 from django.template import loader
+from django.shortcuts import get_object_or_404
 from . import models
 from . import forms
 from django.contrib.auth.decorators import login_required
@@ -207,6 +208,8 @@ def search(request, field=None, value=None, order=None):
     copy_list = models.CanonicalCopy.objects.all()
     display_field = field
     display_value = value
+    detail_url_name = "copy_data"
+    admin_change_url_name = "admin:census_canonicalcopy_change"
 
     if field == "keyword" or field is None and value:
         field = "keyword"
@@ -264,6 +267,8 @@ def search(request, field=None, value=None, order=None):
         display_field = "Ghosts"
         display_value = "All"
         result_list = models.FalseCopy.objects.all()
+        detail_url_name = "false_copy_data"
+        admin_change_url_name = "admin:census_falsecopy_change"
     elif field == "collection":
         result_list, display_field = get_collection(copy_list, value)
         display_value = "All"
@@ -297,6 +302,8 @@ def search(request, field=None, value=None, order=None):
         "result_list": result_list,
         "copy_count": len(result_list) - frag_count,
         "frag_count": frag_count,
+        "detail_url_name": detail_url_name,
+        "admin_change_url_name": admin_change_url_name,
     }
 
     return HttpResponse(template.render(context, request))
@@ -480,6 +487,14 @@ def copy_data(request, copy_id):
     template = loader.get_template("census/copy_modal.html")
     selected_copy = models.CanonicalCopy.objects.get(pk=copy_id)
     context = {"copy": selected_copy}
+
+    return HttpResponse(template.render(context, request))
+
+
+def false_copy_data(request, copy_id):
+    template = loader.get_template("census/copy_modal.html")
+    selected_copy = get_object_or_404(models.FalseCopy, pk=copy_id)
+    context = {"copy": selected_copy, "is_ghost": True}
 
     return HttpResponse(template.render(context, request))
 

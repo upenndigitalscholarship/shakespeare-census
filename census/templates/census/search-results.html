@@ -66,28 +66,28 @@
                 <tr>
                     <td>
                         {% if copy.nsc and copy.nsc != '0' %}
-                            <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                            <a class="copy_data" href="#" data-form="{% url detail_url_name copy.id %}" title="Details">
                                 {{ copy.nsc }}
                             </a>
                         {% else %}
                             &nbsp;
                         {% endif %}
                         {% if user.is_staff %}
-                            <span class="note">[<a href="{% url 'admin:census_canonicalcopy_change' copy.id %}">Edit&nbsp;copy</a>]</span>
+                            <span class="note">[<a href="{% url admin_change_url_name copy.id %}">Edit&nbsp;copy</a>]</span>
                         {% endif %}
                     </td>
                     <td>
-                        <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                        <a class="copy_data" href="#" data-form="{% url detail_url_name copy.id %}" title="Details">
                             {{ copy.issue.year }}
                         </a>
                     </td>
                     <td>
-                        <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                        <a class="copy_data" href="#" data-form="{% url detail_url_name copy.id %}" title="Details">
                             {{ copy.issue.edition.title }}
                         </a>
                     </td>
                     <td>
-                        <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                        <a class="copy_data" href="#" data-form="{% url detail_url_name copy.id %}" title="Details">
                             {{ copy.location.name }}
                         </a>
                     </td>

@@ -2,7 +2,7 @@
     <div class="modal-content">
         <div class="modal-header px-6 py-4 rounded-t-lg border-b border-gray-200" style="background-color:rgba(152,75,67,0.3);">
             <h3 class="modal-title text-left text-lg font-light m-0">
-                Copy Details for {{ copy.issue.edition.title }} ({{ copy.issue.year }})
+                {% if is_ghost %}Ghost Copy Details{% else %}Copy Details{% endif %} for {{ copy.issue.edition.title }} ({{ copy.issue.year }})
                 {% if copy.digital_facsimile_url %}
                     <span class="inline-flex items-center ml-2" title="Link to digital facsimile of this copy">
                         <a href="{{ copy.digital_facsimile_url }}" target="_blank">
@@ -34,10 +34,10 @@
             {% endif %}
 
             {% if copy.local_notes %}
-                <p class="text-left mb-2"><strong>Copy-specific notes</strong>: {{ copy.local_notes }}</p>
+                <p class="text-left mb-2"><strong>{% if is_ghost %}Ghost copy notes{% else %}Copy-specific notes{% endif %}</strong>: {{ copy.local_notes }}</p>
             {% endif %}
 
-            {% if copy.provenance_search_names.all %}
+            {% if not is_ghost and copy.provenance_search_names.all %}
                 <p class="text-left mb-2"><strong>Provenance</strong>:
                     {% for owner in copy.provenance_search_names.all|dictsort:"name" %}
                         {% if owner.viaf %}

@@ -270,6 +270,9 @@ class ProvenanceOwnership(models.Model):
     copy = models.ForeignKey(CanonicalCopy, on_delete=models.CASCADE)
     owner = models.ForeignKey(ProvenanceName, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"{self.owner} — {self.copy}"
+
     class Meta:
         verbose_name_plural = "Provenance ownerships"
 

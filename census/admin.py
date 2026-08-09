@@ -1,6 +1,13 @@
+from csvexport.actions import csvexport
 from django.contrib import admin, auth
 
 from . import models
+
+
+class CSVExportModelAdmin(admin.ModelAdmin):
+    """Make all census records available through the admin CSV export action."""
+
+    actions = [csvexport]
 
 
 class UserInlineAdmin(admin.StackedInline):
@@ -11,7 +18,7 @@ admin.site.unregister(auth.get_user_model())
 
 
 @admin.register(auth.get_user_model())
-class UserDetailAdmin(admin.ModelAdmin):
+class UserDetailAdmin(CSVExportModelAdmin):
     list_display = ["username", "userdetail"]
     inlines = (UserInlineAdmin,)
 
@@ -24,14 +31,24 @@ class CanonicalCopyInline(admin.StackedInline):
     extra = 0
 
 
+@admin.register(models.UserProfile)
+class UserProfileAdmin(CSVExportModelAdmin):
+    pass
+
+
+@admin.register(models.UserDetail)
+class UserDetailRecordAdmin(CSVExportModelAdmin):
+    pass
+
+
 @admin.register(models.Location)
-class LocationAdmin(admin.ModelAdmin):
+class LocationAdmin(CSVExportModelAdmin):
     ordering = ("name",)
     inlines = (CanonicalCopyInline,)
 
 
 @admin.register(models.StaticPageText)
-class StaticPageTextAdmin(admin.ModelAdmin):
+class StaticPageTextAdmin(CSVExportModelAdmin):
     pass
 
 
@@ -45,14 +62,14 @@ class ProvenanceOwnershipInline(admin.TabularInline):
 
 
 @admin.register(models.ProvenanceName)
-class ProvenanceNameAdmin(admin.ModelAdmin):
+class ProvenanceNameAdmin(CSVExportModelAdmin):
     ordering = ("name",)
     search_fields = ("name",)
     inlines = (ProvenanceOwnershipInline,)
 
 
 @admin.register(models.ProvenanceOwnership)
-class ProvenanceOwnershipAdmin(admin.ModelAdmin):
+class ProvenanceOwnershipAdmin(CSVExportModelAdmin):
     autocomplete_fields = ("copy", "owner")
 
 
@@ -60,17 +77,17 @@ class ProvenanceOwnershipAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Title)
-class TitleAdmin(admin.ModelAdmin):
+class TitleAdmin(CSVExportModelAdmin):
     ordering = ("title",)
 
 
 @admin.register(models.Issue)
-class IssueAdmin(admin.ModelAdmin):
+class IssueAdmin(CSVExportModelAdmin):
     pass
 
 
 @admin.register(models.Edition)
-class EditionAdmin(admin.ModelAdmin):
+class EditionAdmin(CSVExportModelAdmin):
     pass
 
 
@@ -78,20 +95,36 @@ class EditionAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.CanonicalCopy)
-class CanonicalCopyAdmin(admin.ModelAdmin):
+class CanonicalCopyAdmin(CSVExportModelAdmin):
     inlines = (ProvenanceOwnershipInline,)
     search_fields = ("NSC", "issue__edition__title__title")
 
 
-admin.site.register(models.FalseCopy)
-admin.site.register(models.BaseCopy)
+@admin.register(models.FalseCopy)
+class FalseCopyAdmin(CSVExportModelAdmin):
+    pass
+
+
+@admin.register(models.BaseCopy)
+class BaseCopyAdmin(CSVExportModelAdmin):
+    pass
 
 
 @admin.register(models.DraftCopy)
-class DraftCopyAdmin(admin.ModelAdmin):
+class DraftCopyAdmin(CSVExportModelAdmin):
     raw_id_fields = ("parent",)
 
 
 @admin.register(models.HistoryCopy)
-class HistoryCopyAdmin(admin.ModelAdmin):
+class HistoryCopyAdmin(CSVExportModelAdmin):
     raw_id_fields = ("parent",)
+
+
+@admin.register(models.RejectedDraftCopy)
+class RejectedDraftCopyAdmin(CSVExportModelAdmin):
+    raw_id_fields = ("parent",)
+
+
+@admin.register(models.CopyForm)
+class CopyFormAdmin(CSVExportModelAdmin):
+    pass

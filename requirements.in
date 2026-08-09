@@ -10,6 +10,7 @@ django-model-utils
 gevent
 gunicorn
 django-tailwind-cli==4.5.1
+django-admin-csvexport
 
 ipython
 vinnie

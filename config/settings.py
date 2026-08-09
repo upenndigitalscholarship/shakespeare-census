@@ -75,6 +75,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "django_extensions",
     "django_tailwind_cli",
+    "csvexport",
 ]
 
 # Local apps
